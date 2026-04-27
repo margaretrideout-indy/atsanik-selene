@@ -7,7 +7,7 @@ import {
 
 // --- THE MASTER ARCHIVE (50 UNIQUE ITEMS) ---
 const MATERIA_DATA = [
-  // --- CRYSTALS (25) ---
+  // --- CRYSTALS ---
   { id: 'c1', name: 'Moonstone', type: 'Crystal', element: 'Water', property: 'Intuition', planet: 'Moon', description: 'Connects to the divine feminine and new beginnings.', icon: <Droplets size={18} />, color: 'text-blue-200', theme: 'border-blue-500/20' },
   { id: 'c2', name: 'Amethyst', type: 'Crystal', element: 'Spirit', property: 'Peace', planet: 'Jupiter', description: 'Transmutes negative energy into love and protection.', icon: <Sparkles size={18} />, color: 'text-indigo-400', theme: 'border-indigo-500/20' },
   { id: 'c3', name: 'Citrine', type: 'Crystal', element: 'Fire', property: 'Wealth', planet: 'Sun', description: 'The stone of manifestation and personal will.', icon: <Sun size={18} />, color: 'text-yellow-500', theme: 'border-yellow-500/20' },
@@ -34,7 +34,7 @@ const MATERIA_DATA = [
   { id: 'c24', name: 'Rhodonite', type: 'Crystal', element: 'Earth', property: 'Forgiveness', planet: 'Venus', description: 'An emotional balancer that clears scars.', icon: <Heart size={18} />, color: 'text-pink-600', theme: 'border-pink-700/20' },
   { id: 'c25', name: 'Sunstone', type: 'Crystal', element: 'Fire', property: 'Joy', planet: 'Sun', description: 'Instills good nature and heightens intuition.', icon: <Sun size={18} />, color: 'text-orange-300', theme: 'border-orange-400/20' },
 
-  // --- HERBS (25) ---
+  // --- HERBS ---
   { id: 'h1', name: 'Lavender', type: 'Herb', element: 'Air', property: 'Peace', planet: 'Mercury', description: 'Used for calming the mind and inducing dreams.', icon: <Wind size={18} />, color: 'text-purple-400', theme: 'border-emerald-500/20' },
   { id: 'h2', name: 'Mugwort', type: 'Herb', element: 'Earth', property: 'Vision', planet: 'Moon', description: 'Enhances psychic vision and astral projection.', icon: <Mountain size={18} />, color: 'text-emerald-500', theme: 'border-emerald-500/20' },
   { id: 'h3', name: 'Rosemary', type: 'Herb', element: 'Fire', property: 'Memory', planet: 'Sun', description: 'Used for mental clarity and protection.', icon: <Flame size={18} />, color: 'text-blue-400', theme: 'border-emerald-500/20' },
@@ -95,7 +95,11 @@ export default function Garden() {
     setIntent("");
   };
 
-  const filteredData = MATERIA_DATA.filter(item => item.type === subFilter);
+  // --- ORDERING LOGIC ---
+  const filteredData = MATERIA_DATA
+    .filter(item => item.type === subFilter)
+    .sort((a, b) => a.name.localeCompare(b.name)); // Alphabetizes A-Z
+
   const visibleData = showAll ? filteredData : filteredData.slice(0, 9);
 
   return (
