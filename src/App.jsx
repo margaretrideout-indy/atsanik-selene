@@ -1,16 +1,22 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import Garden from './pages/Garden'; 
 
-// This App component acts as the 'Aether' (the space that holds everything)
+/**
+ * App.jsx: The Root Component
+ * This file acts as the framework for your application.
+ * All the ritual logic, data, and tabs live within the Garden component.
+ */
 function App() {
   return (
-    <div className="min-h-screen bg-[#040d0a] selection:bg-emerald-500/30">
-      {/* Suspense is a safety net. If Garden takes a millisecond to load, 
-          it shows a dark screen instead of a white flash.
+    <div 
+      className="min-h-screen bg-[#040d0a]" 
+      style={{ margin: 0, padding: 0, overflowX: 'hidden' }}
+    >
+      {/* By importing Garden here, we keep the main file clean. 
+        All your Herbs, Crystals, and Moon logic are now safely 
+        encapsulated in /src/pages/Garden.jsx.
       */}
-      <Suspense fallback={<div className="min-h-screen bg-[#040d0a]" />}>
-        <Garden />
-      </Suspense>
+      <Garden />
     </div>
   );
 }
