@@ -1,0 +1,21 @@
+{
+  "name": "Ritual",
+  "type": "object",
+  "properties": {
+    "intent": {
+      "type": "string",
+      "description": "The working intention of the ritual"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Names of the materia used"
+    }
+  },
+  "required": [
+    "intent",
+    "tools"
+  ]
+}

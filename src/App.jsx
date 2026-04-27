@@ -1,23 +1,51 @@
-import React from 'react';
-import Garden from './pages/Garden'; 
+import { Toaster } from "@/components/ui/toaster"
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClientInstance } from '@/lib/query-client'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PageNotFound from './lib/PageNotFound';
+import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import Garden from './pages/Garden';
+// Add page imports here
 
-/**
- * App.jsx: The Root Component
- * This file acts as the framework for your application.
- * All the ritual logic, data, and tabs live within the Garden component.
- */
+const AuthenticatedApp = () => {
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+
+  if (isLoadingPublicSettings || isLoadingAuth) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-[#020806]">
+        <div className="w-8 h-8 border-2 border-emerald-500/20 border-t-emerald-400 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (authError) {
+    if (authError.type === 'user_not_registered') {
+      return <UserNotRegisteredError />;
+    } else if (authError.type === 'auth_required') {
+      navigateToLogin();
+      return null;
+    }
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Garden />} />
+      <Route path="*" element={<PageNotFound />} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
-    <div 
-      className="min-h-screen bg-[#040d0a]" 
-      style={{ margin: 0, padding: 0, overflowX: 'hidden' }}
-    >
-      {/* By importing Garden here, we keep the main file clean. 
-        All your Herbs, Crystals, and Moon logic are now safely 
-        encapsulated in /src/pages/Garden.jsx.
-      */}
-      <Garden />
-    </div>
+    <AuthProvider>
+      <QueryClientProvider client={queryClientInstance}>
+        <Router>
+          <AuthenticatedApp />
+        </Router>
+        <Toaster />
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

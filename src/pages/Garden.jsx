@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { createClient } from '@supabase/supabase-client';
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Moon, Sparkles, Book, Leaf, Wind, Droplets, Flame, Mountain, 
-  Shield, Sun, Clock, Zap, Eye, Heart, Star, Cloud, Plus, X, 
-  Layers, Coffee, Circle, Search, ChevronDown, ChevronUp, Beaker, 
-  Wand2, Calendar, LogOut, BarChart3, ShoppingBag
+  Shield, Sun, Zap, Eye, Heart, Star, Cloud,
+  Layers, Coffee, Circle, Search, LogOut, BarChart3, ShoppingBag
 } from 'lucide-react';
-
-// --- INITIALIZE SUPABASE ---
-// Link your project at supabase.com to get these keys
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // --- THE MASTER DATABASE (Full 80+ Items) ---
 const MASTER_DATA = [
@@ -107,54 +100,25 @@ const MASTER_DATA = [
 export default function Garden() {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('moon');
   const [subFilter, setSubFilter] = useState('Crystal');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMateria, setSelectedMateria] = useState([]);
   const [rituals, setRituals] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // --- IDENTITY & DATA SYNC ---
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      handleUserIdentity(session?.user);
-    };
-    init();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleUserIdentity(session?.user);
+    base44.auth.me().then(u => {
+      setUser(u);
+      setIsAdmin(u?.role === 'admin');
+      fetchRituals();
+    }).catch(() => {
+      base44.auth.redirectToLogin();
     });
-    return () => subscription.unsubscribe();
   }, []);
 
-  const handleUserIdentity = (sessionUser) => {
-    setUser(sessionUser ?? null);
-    // CHANGE THIS TO YOUR EMAIL to unlock Admin
-    if (sessionUser?.email === 'your_admin_email@test.com') {
-        setIsAdmin(true);
-    } else {
-        setIsAdmin(false);
-    }
-    if (sessionUser) fetchRituals(sessionUser.id);
-  };
-
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = authMode === 'signup' 
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    setLoading(false);
-  };
-
-  const fetchRituals = async (userId) => {
-    const { data } = await supabase.from('rituals').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+  const fetchRituals = async () => {
+    const data = await base44.entities.Ritual.list('-created_date');
     setRituals(data || []);
   };
 
@@ -162,12 +126,10 @@ export default function Garden() {
     if (!user) return;
     const names = selectedMateria.map(m => m.name);
     const intent = `Working of ${names.join(' and ')}`;
-    const { error } = await supabase.from('rituals').insert([{ user_id: user.id, intent, tools: names }]);
-    if (!error) {
-      setSelectedMateria([]);
-      fetchRituals(user.id);
-      setActiveTab('journal');
-    }
+    await base44.entities.Ritual.create({ intent, tools: names });
+    setSelectedMateria([]);
+    await fetchRituals();
+    setActiveTab('journal');
   };
 
   const toggleMateria = (item) => {
@@ -186,25 +148,10 @@ export default function Garden() {
     return "By my will and the old ways, this magic is bound.";
   }, [selectedMateria]);
 
-  // --- ENTRANCE VIEW ---
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#020806] flex items-center justify-center p-6 text-slate-300">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full bg-white/[0.02] border border-white/10 p-12 rounded-[4rem] text-center shadow-2xl backdrop-blur-md">
-          <Moon size={40} className="mx-auto text-emerald-400 mb-6" />
-          <h2 className="text-3xl font-serif text-white mb-2 italic">Selene Collective</h2>
-          <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-10 font-black">Digital Coven Access</p>
-          <form onSubmit={handleAuth} className="space-y-4">
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
-            <input type="password" placeholder="Key" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
-            <button type="submit" className="w-full py-4 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-400 transition-all text-xs">
-              {loading ? "..." : authMode === 'login' ? 'Enter' : 'Join'}
-            </button>
-          </form>
-          <button onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')} className="mt-8 text-[9px] uppercase tracking-widest text-slate-600 hover:text-white transition-colors font-black">
-            {authMode === 'login' ? 'Register Spirit' : 'Member Login'}
-          </button>
-        </motion.div>
+      <div className="min-h-screen bg-[#020806] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-emerald-500/20 border-t-emerald-400 rounded-full animate-spin" />
       </div>
     );
   }
@@ -231,7 +178,7 @@ export default function Garden() {
           )}
         </div>
 
-        <button onClick={() => supabase.auth.signOut()} className="text-slate-800 hover:text-red-400 transition-colors"><LogOut size={18}/></button>
+        <button onClick={() => base44.auth.logout()} className="text-slate-800 hover:text-red-400 transition-colors"><LogOut size={18}/></button>
       </nav>
 
       <main className="max-w-7xl mx-auto px-8">
