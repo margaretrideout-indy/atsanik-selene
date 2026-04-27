@@ -115,6 +115,7 @@ export default function Garden() {
   const [ritualOutput, setRitualOutput] = useState(null);
   const [archives, setArchives] = useState([]);
 
+  // Sync Archives
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
     if (saved) setArchives(JSON.parse(saved));
@@ -137,6 +138,7 @@ export default function Garden() {
     } catch(e) {}
   };
 
+  // The Fragment Weaver logic you liked!
   const weaveMantra = useMemo(() => {
     if (selectedItems.length === 0) return "Assemble the materia...";
     
@@ -147,15 +149,12 @@ export default function Garden() {
     const intent = selectedItems[0].property.toLowerCase();
 
     let story = "";
-    
-    // Fragment Logic: Building a sentence based on composition
     if (crystals.length > 0) story += `Drawing from the bedrock of ${crystals.join(' and ')}, `;
     if (herbs.length > 0) story += `I release the spirit of ${herbs.join(' and ')} to carry the work. `;
     if (pantry.length > 0) story += `With the domestic focus of ${pantry.join(' and ')}, the intent is grounded. `;
     if (colors.length > 0) story += `Woven into the hue of ${colors[0]}, `;
     
     story += `this working for ${intent} is now bound.`;
-
     return story;
   }, [selectedItems]);
 
@@ -194,7 +193,7 @@ export default function Garden() {
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene Garden</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot'].map(tab => (
-             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', transition: '0.4s' }}>{tab}</button>
+             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
           ))}
         </div>
       </header>
@@ -202,21 +201,20 @@ export default function Garden() {
       {activeTab === 'moon' && (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ fontSize: '120px', marginBottom: '25px', opacity: 0.9 }}>🌖</div>
+            <div style={{ fontSize: '120px', marginBottom: '25px' }}>🌖</div>
             <h2 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '100' }}>Waning Gibbous</h2>
-            <div style={{ width: '40px', height: '1px', background: '#065f46', margin: '20px auto' }}></div>
             <p style={{ color: '#065f46', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px' }}>Illumination 64% • The Season of Release</p>
           </div>
           
-          <div style={{ marginTop: '40px' }}>
+          <div>
             <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#1e293b', letterSpacing: '4px', borderBottom: '1px solid #111', paddingBottom: '15px' }}>The Archives</h3>
             {archives.length === 0 ? (
-              <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>Your history is waiting to be written.</p>
+              <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>History is waiting to be written.</p>
             ) : (
               archives.map(log => (
                 <div key={log.id} style={{ padding: '30px 0', borderBottom: '1px solid #050c09' }}>
                   <span style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase' }}>{log.date}</span>
-                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '12px', lineHeight: '1.7', maxWidth: '500px' }}>"{log.mantra}"</p>
+                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '12px', lineHeight: '1.7' }}>"{log.mantra}"</p>
                 </div>
               ))
             )}
@@ -246,10 +244,10 @@ export default function Garden() {
                 playChime('soft');
                 if (selectedItems.find(s => s.id === item.id)) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
                 else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
-              }} style={{ background: selectedItems.find(s => s.id === item.id) ? '#064e3b08' : '#040a08', border: selectedItems.find(s => s.id === item.id) ? '1px solid #10b981' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: '0.4s' }}>
+              }} style={{ background: selectedItems.find(s => s.id === item.id) ? '#064e3b08' : '#040a08', border: selectedItems.find(s => s.id === item.id) ? '1px solid #10b981' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer' }}>
                 <div style={{ fontSize: '32px', marginBottom: '20px', opacity: selectedItems.find(s => s.id === item.id) ? 1 : 0.3 }}>{item.icon}</div>
-                <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic', letterSpacing: '0.5px' }}>{item.name}</div>
-                <div style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', marginTop: '8px', letterSpacing: '2px' }}>{item.property}</div>
+                <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
+                <div style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
               </div>
             ))}
           </div>
@@ -263,8 +261,8 @@ export default function Garden() {
                <div style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
             </div>
           ) : (
-            <div style={{ maxWidth: '350px', margin: '0 auto', animation: 'fadeIn 1.5s ease' }}>
-              <div style={{ fontSize: '100px', marginBottom: '30px', transform: tarot.reversed ? 'rotate(180deg)' : 'none', transition: '1.2s cubic-bezier(0.19, 1, 0.22, 1)' }}>{tarot.icon}</div>
+            <div style={{ maxWidth: '350px', margin: '0 auto' }}>
+              <div style={{ fontSize: '100px', marginBottom: '30px', transform: tarot.reversed ? 'rotate(180deg)' : 'none', transition: '1.2s' }}>{tarot.icon}</div>
               <h3 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic' }}>{tarot.name} {tarot.reversed && <span style={{ color: '#065f46', fontSize: '14px' }}>(Shadow)</span>}</h3>
               <p style={{ color: '#065f46', fontSize: '14px', lineHeight: '2', fontStyle: 'italic', marginTop: '20px' }}>{tarot.meaning}</p>
               <button onClick={() => setTarot(null)} style={{ marginTop: '50px', background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
@@ -273,7 +271,7 @@ export default function Garden() {
         </div>
       )}
 
-      {/* RITUAL OVERLAY */}
+      {/* RITUAL OVERLAY: Replicates the UI from the final screenshot */}
       {ritualOutput && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: '#020806', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ maxWidth: '550px', width: '100%', padding: '40px' }}>
@@ -289,7 +287,7 @@ export default function Garden() {
       )}
 
       {selectedItems.length > 0 && !ritualOutput && (
-        <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '600px', backgroundColor: 'rgba(0,0,0,0.95)', border: '1px solid #111', padding: '35px', textAlign: 'center', zIndex: 100, backdropFilter: 'blur(10px)' }}>
+        <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '600px', backgroundColor: 'rgba(0,0,0,0.95)', border: '1px solid #111', padding: '35px', textAlign: 'center', zIndex: 100 }}>
           <p style={{ color: '#10b981', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', lineHeight: '1.6' }}>"{weaveMantra}"</p>
           <button onClick={() => setRitualOutput([
             "Observe the weight of your chosen materia.",
