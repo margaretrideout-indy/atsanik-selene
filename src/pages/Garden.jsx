@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Moon, Sparkles, Book, Leaf, Wind, Droplets, 
-  Flame, Mountain, Shield, Sun, Clock, History, Zap, Eye, Heart, Star, Cloud
+  Moon, Sparkles, Book, Leaf, Wind, Droplets, Flame, Mountain, 
+  Shield, Sun, Clock, Zap, Eye, Heart, Star, Cloud, Plus, X, Layers
 } from 'lucide-react';
 
-// --- THE MASTER ARCHIVE (50 UNIQUE ITEMS) ---
+// --- DATABASE: CRYSTALS (25), HERBS (25), TAROT (22 Major Arcana) ---
 const MATERIA_DATA = [
-  // --- CRYSTALS ---
+  /* Crystals */
   { id: 'c1', name: 'Moonstone', type: 'Crystal', element: 'Water', property: 'Intuition', planet: 'Moon', description: 'Connects to the divine feminine and new beginnings.', icon: <Droplets size={18} />, color: 'text-blue-200', theme: 'border-blue-500/20' },
   { id: 'c2', name: 'Amethyst', type: 'Crystal', element: 'Spirit', property: 'Peace', planet: 'Jupiter', description: 'Transmutes negative energy into love and protection.', icon: <Sparkles size={18} />, color: 'text-indigo-400', theme: 'border-indigo-500/20' },
   { id: 'c3', name: 'Citrine', type: 'Crystal', element: 'Fire', property: 'Wealth', planet: 'Sun', description: 'The stone of manifestation and personal will.', icon: <Sun size={18} />, color: 'text-yellow-500', theme: 'border-yellow-500/20' },
@@ -18,7 +18,7 @@ const MATERIA_DATA = [
   { id: 'c8', name: 'Tiger Eye', type: 'Crystal', element: 'Earth', property: 'Courage', planet: 'Sun', description: 'A stone of protection that may also bring luck.', icon: <Sun size={18} />, color: 'text-orange-400', theme: 'border-orange-500/20' },
   { id: 'c9', name: 'Clear Quartz', type: 'Crystal', element: 'Spirit', property: 'Amplify', planet: 'Sun', description: 'The master healer. Amplifies energy and thought.', icon: <Sparkles size={18} />, color: 'text-slate-200', theme: 'border-white/20' },
   { id: 'c10', name: 'Labradorite', type: 'Crystal', element: 'Air', property: 'Magic', planet: 'Uranus', description: 'The stone of transformation and mystical protection.', icon: <Star size={18} />, color: 'text-cyan-400', theme: 'border-cyan-500/20' },
-  { id: 'c11', name: 'Pyrite', type: 'Crystal', element: 'Earth', property: 'Willpower', planet: 'Mars', description: 'Shields against negative energy and physical danger.', icon: <Flame size={18} />, color: 'text-yellow-600', theme: 'border-yellow-700/20' },
+  { id: 'c11', name: 'Pyrite', type: 'Crystal', element: 'Earth', property: 'Willpower', planet: 'Mars', description: 'Shields against negative energy and danger.', icon: <Flame size={18} />, color: 'text-yellow-600', theme: 'border-yellow-700/20' },
   { id: 'c12', name: 'Obsidian', type: 'Crystal', element: 'Fire', property: 'Shadow', planet: 'Saturn', description: 'Forms a shield against negativity and stress.', icon: <Moon size={18} />, color: 'text-slate-900', theme: 'border-slate-900/50' },
   { id: 'c13', name: 'Fluorite', type: 'Crystal', element: 'Air', property: 'Focus', planet: 'Mercury', description: 'Cleanses and stabilizes the aura.', icon: <Wind size={18} />, color: 'text-green-300', theme: 'border-green-400/20' },
   { id: 'c14', name: 'Malachite', type: 'Crystal', element: 'Earth', property: 'Growth', planet: 'Venus', description: 'A stone of transformation and emotional healing.', icon: <Mountain size={18} />, color: 'text-emerald-700', theme: 'border-emerald-800/20' },
@@ -33,8 +33,7 @@ const MATERIA_DATA = [
   { id: 'c23', name: 'Lepidolite', type: 'Crystal', element: 'Water', property: 'Balance', planet: 'Neptune', description: 'Assists in the release of old habits.', icon: <Sparkles size={18} />, color: 'text-purple-300', theme: 'border-purple-400/20' },
   { id: 'c24', name: 'Rhodonite', type: 'Crystal', element: 'Earth', property: 'Forgiveness', planet: 'Venus', description: 'An emotional balancer that clears scars.', icon: <Heart size={18} />, color: 'text-pink-600', theme: 'border-pink-700/20' },
   { id: 'c25', name: 'Sunstone', type: 'Crystal', element: 'Fire', property: 'Joy', planet: 'Sun', description: 'Instills good nature and heightens intuition.', icon: <Sun size={18} />, color: 'text-orange-300', theme: 'border-orange-400/20' },
-
-  // --- HERBS ---
+  /* Herbs */
   { id: 'h1', name: 'Lavender', type: 'Herb', element: 'Air', property: 'Peace', planet: 'Mercury', description: 'Used for calming the mind and inducing dreams.', icon: <Wind size={18} />, color: 'text-purple-400', theme: 'border-emerald-500/20' },
   { id: 'h2', name: 'Mugwort', type: 'Herb', element: 'Earth', property: 'Vision', planet: 'Moon', description: 'Enhances psychic vision and astral projection.', icon: <Mountain size={18} />, color: 'text-emerald-500', theme: 'border-emerald-500/20' },
   { id: 'h3', name: 'Rosemary', type: 'Herb', element: 'Fire', property: 'Memory', planet: 'Sun', description: 'Used for mental clarity and protection.', icon: <Flame size={18} />, color: 'text-blue-400', theme: 'border-emerald-500/20' },
@@ -62,57 +61,107 @@ const MATERIA_DATA = [
   { id: 'h25', name: 'Yarrow', type: 'Herb', element: 'Water', property: 'Banishing', planet: 'Venus', description: 'Used to banish fear and bring courage.', icon: <Shield size={18} />, color: 'text-slate-300', theme: 'border-emerald-500/20' }
 ];
 
+const TAROT_DECK = [
+  { name: "The Fool", meaning: "New beginnings, optimism, trust in life." },
+  { name: "The Magician", meaning: "Manifestation, resourcefulness, power." },
+  { name: "The High Priestess", meaning: "Intuition, sacred knowledge, subconscious." },
+  { name: "The Empress", meaning: "Femininity, nature, abundance." },
+  { name: "The Emperor", meaning: "Authority, structure, a solid foundation." },
+  { name: "The Hierophant", meaning: "Spiritual wisdom, tradition, institutions." },
+  { name: "The Lovers", meaning: "Love, harmony, relationships, choices." },
+  { name: "The Chariot", meaning: "Direction, control, willpower, victory." },
+  { name: "Strength", meaning: "Courage, persuasion, influence, compassion." },
+  { name: "The Hermit", meaning: "Soul-searching, introspection, inner guidance." },
+  { name: "Wheel of Fortune", meaning: "Good luck, karma, life cycles, destiny." },
+  { name: "Justice", meaning: "Truth, fairness, cause and effect, law." },
+  { name: "The Hanged Man", meaning: "Pause, surrender, letting go, new perspectives." },
+  { name: "Death", meaning: "Endings, change, transformation, transition." },
+  { name: "Temperance", meaning: "Balance, moderation, patience, purpose." },
+  { name: "The Devil", meaning: "Shadow self, attachment, addiction, restriction." },
+  { name: "The Tower", meaning: "Sudden change, upheaval, chaos, revelation." },
+  { name: "The Star", meaning: "Hope, faith, purpose, renewal, spirituality." },
+  { name: "The Moon", meaning: "Illusion, fear, anxiety, subconscious, intuition." },
+  { name: "The Sun", meaning: "Positivity, fun, warmth, success, vitality." },
+  { name: "Judgement", meaning: "Judgement, rebirth, inner calling, absolution." },
+  { name: "The World", meaning: "Completion, integration, accomplishment, travel." }
+];
+
 export default function Garden() {
-  const [activeTab, setActiveTab] = useState('library');
+  const [activeTab, setActiveTab] = useState('moon'); // Start with the Moon (Timing)
   const [subFilter, setSubFilter] = useState('Crystal');
   const [showAll, setShowAll] = useState(false);
-  const [moonData, setMoonData] = useState({ phase: 'Calculating...', illumination: 0, daysToFull: 0 });
+  
+  // Ritual State
+  const [selectedMateria, setSelectedMateria] = useState([]);
+  const [tarotCard, setTarotCard] = useState(null);
   const [intent, setIntent] = useState("");
-  const [history, setHistory] = useState(() => {
-    const saved = localStorage.getItem('ritual_history');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [moonData, setMoonData] = useState({ phase: '...', illumination: 0, daysToFull: 0 });
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem('ritual_history') || '[]'));
 
-  useEffect(() => { setShowAll(false); }, [subFilter]);
-
+  // Logic: Moon Calculation
   useEffect(() => {
-    const lp = 2551443; 
-    const now = new Date();
-    const newMoon = new Date('1970-01-07T20:35:00');
+    const lp = 2551443; const now = new Date(); const newMoon = new Date('1970-01-07T20:35:00');
     const phaseCycle = ((now.getTime() - newMoon.getTime()) / 1000) % lp;
     const days = phaseCycle / (24 * 3600);
     let phase = days < 1.8 ? 'New Moon' : days < 5.5 ? 'Waxing Crescent' : days < 9.2 ? 'First Quarter' : days < 12.9 ? 'Waxing Gibbous' : days < 16.6 ? 'Full Moon' : days < 20.3 ? 'Waning Gibbous' : days < 24.0 ? 'Last Quarter' : 'Waning Crescent';
-    const daysToFull = days <= 14.8 ? (14.8 - days).toFixed(1) : (29.5 - days + 14.8).toFixed(1);
-    setMoonData({ phase, illumination: Math.round(Math.abs(50 - (days / 30 * 100)) * 2), daysToFull });
+    setMoonData({ phase, illumination: Math.round(Math.abs(50 - (days / 30 * 100)) * 2), daysToFull: days <= 14.8 ? (14.8 - days).toFixed(1) : (29.5 - days + 14.8).toFixed(1) });
   }, []);
 
-  const bindIntention = () => {
-    if (!intent.trim()) return;
-    const newEntry = { text: intent, date: new Date().toLocaleDateString(), moon: moonData.phase };
-    const updatedHistory = [newEntry, ...history].slice(0, 5);
-    setHistory(updatedHistory);
-    localStorage.setItem('ritual_history', JSON.stringify(updatedHistory));
-    setIntent("");
+  // Handlers
+  const toggleMateria = (item) => {
+    if (selectedMateria.find(m => m.id === item.id)) {
+      setSelectedMateria(selectedMateria.filter(m => m.id !== item.id));
+    } else if (selectedMateria.length < 3) {
+      setSelectedMateria([...selectedMateria, item]);
+    }
   };
 
-  // --- ORDERING LOGIC ---
-  const filteredData = MATERIA_DATA
-    .filter(item => item.type === subFilter)
-    .sort((a, b) => a.name.localeCompare(b.name)); // Alphabetizes A-Z
+  const drawCard = () => {
+    const card = TAROT_DECK[Math.floor(Math.random() * TAROT_DECK.length)];
+    setTarotCard(card);
+  };
 
+  const bindRitual = () => {
+    if (!intent.trim()) return;
+    const entry = {
+      text: intent,
+      date: new Date().toLocaleDateString(),
+      moon: moonData.phase,
+      tools: selectedMateria.map(m => m.name),
+      guidance: tarotCard?.name
+    };
+    const updated = [entry, ...history].slice(0, 5);
+    setHistory(updated);
+    localStorage.setItem('ritual_history', JSON.stringify(updated));
+    setIntent(""); setSelectedMateria([]); setTarotCard(null);
+    setActiveTab('moon'); // Reset cycle
+  };
+
+  const filteredData = MATERIA_DATA.filter(item => item.type === subFilter).sort((a,b) => a.name.localeCompare(b.name));
   const visibleData = showAll ? filteredData : filteredData.slice(0, 9);
 
   return (
-    <div className="min-h-screen bg-[#040d0a] text-slate-200 font-sans pb-20 selection:bg-emerald-500/30">
-      <nav className="max-w-7xl mx-auto px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div className="min-h-screen bg-[#020806] text-slate-300 font-sans pb-32 selection:bg-emerald-500/20">
+      {/* HEADER & RITUAL PROGRESS */}
+      <nav className="max-w-7xl mx-auto px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-10">
         <div className="flex items-center gap-3">
-          <Moon className="text-emerald-400" />
-          <h1 className="text-xl font-light tracking-[0.4em] uppercase text-white">Selene</h1>
+          <Moon className="text-emerald-400 animate-pulse" />
+          <h1 className="text-xl font-light tracking-[0.5em] uppercase text-white">Selene</h1>
         </div>
-        <div className="flex bg-white/5 border border-white/10 p-1 rounded-2xl">
-          {['library', 'moon', 'altar'].map(t => (
-            <button key={t} onClick={() => setActiveTab(t)} className={`px-8 py-2.5 rounded-xl text-[9px] uppercase tracking-widest font-bold transition-all ${activeTab === t ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/20' : 'text-slate-500'}`}>
-              {t}
+        
+        <div className="flex bg-white/5 border border-white/10 p-1.5 rounded-2xl backdrop-blur-xl">
+          {[
+            { id: 'moon', icon: <Clock size={14}/>, label: '1. Timing' },
+            { id: 'library', icon: <Layers size={14}/>, label: '2. Tools' },
+            { id: 'oracle', icon: <Star size={14}/>, label: '3. Guidance' },
+            { id: 'altar', icon: <Flame size={14}/>, label: '4. Manifest' }
+          ].map(step => (
+            <button 
+              key={step.id} 
+              onClick={() => setActiveTab(step.id)}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] uppercase tracking-widest font-black transition-all ${activeTab === step.id ? 'bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.1)]' : 'text-slate-600 hover:text-slate-400'}`}
+            >
+              {step.icon} {step.label}
             </button>
           ))}
         </div>
@@ -120,78 +169,146 @@ export default function Garden() {
 
       <main className="max-w-7xl mx-auto px-8">
         <AnimatePresence mode="wait">
-          {activeTab === 'library' && (
-            <motion.div key="lib" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="flex justify-center gap-12 mb-12 border-b border-white/5 pb-4">
-                {['Crystal', 'Herb'].map((f) => (
-                  <button key={f} onClick={() => setSubFilter(f)} className={`text-[9px] uppercase tracking-[0.3em] font-bold relative pb-4 ${subFilter === f ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    {f}s {subFilter === f && <motion.div layoutId="un" className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-400" />}
-                  </button>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {visibleData.map(item => (
-                  <motion.div layout key={item.id} className={`bg-[#06120f] border ${item.theme} p-8 rounded-[2rem] hover:border-emerald-500/40 transition-all`}>
-                    <div className="flex justify-between mb-6">
-                      <div className={`p-3 rounded-xl bg-white/5 border border-white/10 ${item.color}`}>{item.icon}</div>
-                      <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">{item.type}</div>
-                    </div>
-                    <h3 className="text-2xl font-serif italic mb-1 text-white">{item.name}</h3>
-                    <div className="flex gap-2 mb-4 text-[8px] font-bold uppercase tracking-widest text-emerald-500/60">
-                      <span>{item.element}</span> • <span>{item.planet}</span>
-                    </div>
-                    <p className="text-sm text-slate-400 font-light mb-8 italic">"{item.description}"</p>
-                    <div className="flex items-center gap-3 text-[10px] text-slate-500 border-t border-white/5 pt-5">
-                      <Zap size={12} className="text-emerald-500/50" />
-                      <span>{item.property}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {!showAll && (
-                <div className="flex justify-center mt-12">
-                  <button onClick={() => setShowAll(true)} className="px-12 py-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl text-[9px] uppercase tracking-[0.4em] font-bold text-emerald-400 hover:bg-emerald-500/20 transition-all">
-                    Expand {subFilter} Archive
+          
+          {/* STEP 1: MOON */}
+          {activeTab === 'moon' && (
+            <motion.div key="moon" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto text-center">
+              <div className="p-16 bg-white/[0.02] border border-white/5 rounded-[4rem] relative overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/5 blur-[100px]" />
+                <h2 className="text-6xl font-serif italic text-white mb-4">{moonData.phase}</h2>
+                <p className="text-emerald-500 tracking-[0.6em] text-[10px] font-black uppercase mb-12">{moonData.daysToFull} Days to Peak</p>
+                
+                <div className="grid grid-cols-2 gap-4 text-left">
+                  <div className="p-8 bg-white/5 border border-white/10 rounded-[2.5rem]">
+                    <p className="text-[9px] uppercase text-emerald-500 font-bold mb-2">Phase Influence</p>
+                    <p className="text-sm italic text-slate-400">"{moonData.illumination > 50 ? 'The tide is rising. Best for expansion, attraction, and growth.' : 'The tide is receding. Best for introspection, banishing, and cleansing.'}"</p>
+                  </div>
+                  <button onClick={() => setActiveTab('library')} className="p-8 bg-emerald-500/10 border border-emerald-500/20 rounded-[2.5rem] flex flex-col items-center justify-center group">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400">Proceed to Gathering</span>
+                    <Plus className="mt-4 text-emerald-400 group-hover:rotate-90 transition-transform" />
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP 2: LIBRARY (Selection Mode) */}
+          {activeTab === 'library' && (
+            <motion.div key="lib" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <div className="flex justify-between items-end mb-12 border-b border-white/5 pb-6">
+                <div className="flex gap-8">
+                  {['Crystal', 'Herb'].map(f => (
+                    <button key={f} onClick={() => {setSubFilter(f); setShowAll(false);}} className={`text-[10px] uppercase tracking-[0.4em] font-black transition-all ${subFilter === f ? 'text-emerald-400' : 'text-slate-600'}`}>
+                      {f}s
+                    </button>
+                  ))}
+                </div>
+                <div className="text-[9px] uppercase tracking-widest text-emerald-500 font-bold bg-emerald-500/5 px-4 py-2 rounded-full border border-emerald-500/10">
+                  Selected: {selectedMateria.length} / 3
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {visibleData.map(item => {
+                  const isSelected = selectedMateria.find(m => m.id === item.id);
+                  return (
+                    <div 
+                      key={item.id} 
+                      onClick={() => toggleMateria(item)}
+                      className={`cursor-pointer p-8 rounded-[2.5rem] border transition-all ${isSelected ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/[0.02] border-white/5 hover:border-emerald-500/30'}`}
+                    >
+                      <div className={`p-3 w-fit rounded-xl bg-white/5 mb-6 ${item.color}`}>{item.icon}</div>
+                      <h3 className="text-xl font-serif italic text-white">{item.name}</h3>
+                      <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-2">{item.property}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-12 flex justify-center gap-6">
+                {!showAll && <button onClick={() => setShowAll(true)} className="px-8 py-4 text-[9px] uppercase tracking-widest font-bold border border-white/10 rounded-xl">View All</button>}
+                <button onClick={() => setActiveTab('oracle')} className="px-12 py-4 bg-emerald-500 text-black text-[9px] uppercase tracking-[0.3em] font-black rounded-xl">Consult Guidance</button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP 3: ORACLE (Tarot) */}
+          {activeTab === 'oracle' && (
+            <motion.div key="oracle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto text-center">
+              {!tarotCard ? (
+                <div onClick={drawCard} className="aspect-[2/3] w-64 mx-auto bg-emerald-500/5 border-2 border-dashed border-emerald-500/20 rounded-3xl flex flex-col items-center justify-center cursor-pointer group hover:bg-emerald-500/10 transition-all">
+                  <Star className="text-emerald-500/40 mb-4 group-hover:scale-125 transition-transform" size={40} />
+                  <p className="text-[10px] uppercase tracking-[0.4em] text-emerald-500 font-black">Draw a Card</p>
+                </div>
+              ) : (
+                <motion.div initial={{ rotateY: 180 }} animate={{ rotateY: 0 }} className="p-12 bg-white/[0.03] border border-emerald-500/20 rounded-[3rem]">
+                  <Sparkles className="text-emerald-400 mx-auto mb-6" />
+                  <h3 className="text-3xl font-serif italic text-white mb-4">{tarotCard.name}</h3>
+                  <p className="text-sm text-slate-400 italic leading-relaxed mb-10">"{tarotCard.meaning}"</p>
+                  <div className="flex gap-4 justify-center">
+                    <button onClick={drawCard} className="text-[9px] uppercase tracking-widest text-slate-500 hover:text-white">Redraw</button>
+                    <button onClick={() => setActiveTab('altar')} className="px-8 py-3 bg-white/5 rounded-xl text-[9px] uppercase tracking-widest font-bold text-emerald-400">Proceed to Altar</button>
+                  </div>
+                </motion.div>
               )}
             </motion.div>
           )}
 
-          {activeTab === 'moon' && (
-            <motion.div key="moon" className="max-w-4xl mx-auto text-center p-16 bg-white/[0.02] border border-white/5 rounded-[3rem]">
-                <Moon size={64} className="mx-auto text-emerald-400 mb-6" />
-                <h2 className="text-4xl font-serif italic text-white mb-2">{moonData.phase}</h2>
-                <p className="text-emerald-500 tracking-[0.4em] text-[10px] mb-12 uppercase">{moonData.daysToFull} Days to Full Moon</p>
-                <div className="grid grid-cols-2 gap-4 text-left">
-                  <div className="p-8 bg-white/5 rounded-[2rem] border border-white/10">
-                    <p className="text-[9px] uppercase text-emerald-500 mb-2">Luminance</p>
-                    <p className="text-3xl text-white font-serif">{moonData.illumination}%</p>
-                  </div>
-                  <div className="p-8 bg-white/5 rounded-[2rem] border border-white/10">
-                    <p className="text-[9px] uppercase text-emerald-500 mb-2">Focus</p>
-                    <p className="text-xs text-slate-400">{moonData.illumination > 50 ? 'Expansion' : 'Banishing'}</p>
+          {/* STEP 4: ALTAR (Final Manifestation) */}
+          {activeTab === 'altar' && (
+            <motion.div key="altar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Intent Panel */}
+                <div className="lg:col-span-2 bg-[#06120f] border border-emerald-500/20 p-12 rounded-[3.5rem] relative shadow-2xl">
+                  <div className="absolute top-0 right-0 p-8 opacity-10"><Flame size={120} /></div>
+                  <h3 className="text-xl font-serif italic text-white mb-8 tracking-widest">The Great Work</h3>
+                  <textarea 
+                    value={intent} 
+                    onChange={(e) => setIntent(e.target.value)} 
+                    placeholder="Describe your intent..." 
+                    className="w-full bg-transparent border-none text-2xl italic text-emerald-100 h-48 focus:ring-0"
+                  />
+                  <button onClick={bindRitual} className="w-full py-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-emerald-500/20 transition-all">
+                    Seal Ritual
+                  </button>
+                </div>
+
+                {/* Sidebar: Current Tools */}
+                <div className="space-y-6">
+                  <div className="p-8 bg-white/5 border border-white/10 rounded-[2.5rem]">
+                    <h4 className="text-[9px] uppercase tracking-widest text-slate-500 font-black mb-6">Active Tools</h4>
+                    <div className="space-y-3">
+                      {selectedMateria.map(m => (
+                        <div key={m.id} className="flex items-center gap-3 text-xs italic text-emerald-100">
+                          <div className={m.color}>{m.icon}</div> {m.name}
+                        </div>
+                      ))}
+                      {tarotCard && <div className="flex items-center gap-3 text-xs italic text-blue-300 pt-3 border-t border-white/5"><Star size={14}/> {tarotCard.name}</div>}
+                      {selectedMateria.length === 0 && <p className="text-[10px] text-slate-600 uppercase">No tools gathered</p>}
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Ritual Log */}
+              <div className="mt-20 space-y-4">
+                <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 font-black ml-6">Ritual Archives</p>
+                {history.map((h, i) => (
+                  <div key={i} className="p-8 bg-white/[0.01] border border-white/5 rounded-3xl flex justify-between items-center group">
+                    <div>
+                      <p className="text-sm text-slate-400 italic">"{h.text}"</p>
+                      <div className="flex gap-4 mt-3 text-[8px] uppercase tracking-widest font-black text-slate-600">
+                        <span>{h.date}</span><span>{h.moon}</span>
+                        {h.tools?.length > 0 && <span className="text-emerald-900">{h.tools.join(' + ')}</span>}
+                      </div>
+                    </div>
+                    <Sparkles className="text-slate-800 group-hover:text-emerald-500/30 transition-colors" size={16} />
+                  </div>
+                ))}
+              </div>
             </motion.div>
           )}
 
-          {activeTab === 'altar' && (
-            <motion.div key="altar" className="max-w-2xl mx-auto space-y-8">
-              <div className="bg-[#06120f] border border-white/10 p-12 rounded-[3rem]">
-                <h3 className="text-xl font-serif italic text-white text-center mb-8 uppercase tracking-[0.3em]">Intent</h3>
-                <textarea value={intent} onChange={(e) => setIntent(e.target.value)} placeholder="Cast focus..." className="w-full bg-transparent border-none text-center text-xl italic text-emerald-100 focus:ring-0 h-24" />
-                <button onClick={bindIntention} className="w-full py-5 mt-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-emerald-500/20">Bind</button>
-              </div>
-              {history.map((entry, i) => (
-                <div key={i} className="p-6 bg-white/5 border border-white/5 rounded-2xl italic text-slate-400 text-sm">
-                  "{entry.text}" <span className="float-right text-[9px] not-italic text-slate-600">{entry.date}</span>
-                </div>
-              ))}
-            </motion.div>
-          )}
         </AnimatePresence>
       </main>
     </div>
