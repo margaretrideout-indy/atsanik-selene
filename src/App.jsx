@@ -1,47 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Sprout, Sparkles, Flame, Waves, Mountain, Wind, Droplets } from 'lucide-react';
+import { 
+  Moon, Sparkles, Book, Leaf, Shrub, 
+  Calendar, PenTool, Wind, Droplets, 
+  Flame, Mountain, Info, ChevronRight 
+} from 'lucide-react';
 
-// --- INITIAL DATA ---
-const INITIAL_HERBS = [
-  { 
-    id: '1', 
-    name: 'Moonlight Lavender', 
-    element: 'Lunar Water', 
-    rarity: 'RARE', 
-    growth: 24, 
-    description: 'A silvery-violet herb that blooms only under waning moons. Its fragrance induces vivid prophetic dreams.',
-    color: 'from-purple-500 to-indigo-400',
-    icon: <Waves size={16} />
-  },
-  { 
-    id: '2', 
-    name: 'Cinder Bloom', 
-    element: 'Solar Fire', 
-    rarity: 'LEGENDARY', 
-    growth: 58, 
-    description: 'Born from volcanic ash, this ember-petaled flower radiates warmth and can ignite under a full moon.',
-    color: 'from-orange-600 to-red-500',
-    icon: <Flame size={16} />
-  },
-  { 
-    id: '3', 
-    name: 'Star-Stitched Ivy', 
-    element: 'Verdant Earth', 
-    rarity: 'UNCOMMON', 
-    growth: 41, 
-    description: 'An ancient creeping vine whose leaves are traced with bioluminescent constellations after dusk.',
-    color: 'from-emerald-500 to-teal-400',
-    icon: <Mountain size={16} />
-  }
+// --- DATA: MATERIA MEDICA ---
+const MATERIA_DATA = [
+  { id: 'h1', name: 'Moonlight Lavender', type: 'Herb', element: 'Air', property: 'Prophetic Dreams', description: 'Harvest during a waning moon for maximum potency in dream work.', icon: <Wind size={18} />, color: 'text-purple-400' },
+  { id: 'c1', name: 'Moonstone', type: 'Crystal', element: 'Water', property: 'Intuition', description: 'A stone for "new beginnings", strongly connected to the moon and intuition.', icon: <Droplets size={18} />, color: 'text-blue-300' },
+  { id: 'h2', name: 'Mugwort', type: 'Herb', element: 'Earth', property: 'Astral Travel', description: 'Used for protection and to induce lucid dreaming and astral projection.', icon: <Mountain size={18} />, color: 'text-emerald-400' },
+  { id: 'c2', name: 'Amethyst', type: 'Crystal', element: 'Spirit', property: 'Clarity', description: 'A powerful and protective stone. It guards against psychic attack.', icon: <Sparkles size={18} />, color: 'text-indigo-400' },
+  { id: 'h3', name: 'White Sage', type: 'Herb', element: 'Fire', property: 'Cleansing', description: 'Traditionally used to clear negative energy from a space or person.', icon: <Flame size={18} />, color: 'text-orange-300' },
+  { id: 'c3', name: 'Black Tourmaline', type: 'Crystal', element: 'Earth', property: 'Protection', description: 'A premier stone for protection, helping to seal the aura against negativity.', icon: <Mountain size={18} />, color: 'text-slate-400' }
 ];
 
-// --- MAIN APPLICATION COMPONENT ---
 export default function App() {
-  const [herbs, setHerbs] = useState(INITIAL_HERBS);
+  const [activeTab, setActiveTab] = useState('library');
   const [moonData, setMoonData] = useState({ phase: 'Calculating...', illumination: 0 });
+  const [intent, setIntent] = useState("");
 
-  // LUNAR LOGIC: Real-time moon calculation
+  // LUNAR LOGIC
   useEffect(() => {
     const calculateMoon = () => {
       const lp = 2551443; 
@@ -49,170 +29,128 @@ export default function App() {
       const newMoon = new Date('1970-01-07T20:35:00');
       const phaseCycle = ((now.getTime() - newMoon.getTime()) / 1000) % lp;
       const days = phaseCycle / (24 * 3600);
-      
-      let phase = '';
-      if (days < 1.8) phase = 'New Moon';
-      else if (days < 5.5) phase = 'Waxing Crescent';
-      else if (days < 9.2) phase = 'First Quarter';
-      else if (days < 12.9) phase = 'Waxing Gibbous';
-      else if (days < 16.6) phase = 'Full Moon';
-      else if (days < 20.3) phase = 'Waning Gibbous';
-      else if (days < 24.0) phase = 'Last Quarter';
-      else phase = 'Waning Crescent';
-
+      let phase = days < 1.8 ? 'New Moon' : days < 5.5 ? 'Waxing Crescent' : days < 9.2 ? 'First Quarter' : days < 12.9 ? 'Waxing Gibbous' : days < 16.6 ? 'Full Moon' : days < 20.3 ? 'Waning Gibbous' : days < 24.0 ? 'Last Quarter' : 'Waning Crescent';
       const illumination = Math.round(Math.abs(50 - (days / 30 * 100)) * 2);
       setMoonData({ phase, illumination });
     };
-
     calculateMoon();
   }, []);
 
-  // NURTURE ACTION: Increments growth based on lunar power
-  const nurtureHerb = (id) => {
-    setHerbs(prev => prev.map(herb => {
-      if (herb.id === id && herb.growth < 100) {
-        // High illumination (over 70%) provides a 2x growth boost!
-        const powerBoost = moonData.illumination > 70 ? 12 : 6;
-        return { ...herb, growth: Math.min(herb.growth + powerBoost, 100) };
-      }
-      return herb;
-    }));
-  };
-
   return (
-    <div className="min-h-screen bg-[#040d0a] text-slate-200 font-sans selection:bg-emerald-500/30 overflow-x-hidden">
-      {/* BACKGROUND GLOW */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.1, 0.15, 0.1] 
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute -top-1/4 -left-1/4 w-full h-full bg-emerald-500/20 blur-[120px] rounded-full"
-        />
+    <div className="min-h-screen bg-[#040d0a] text-slate-200 font-sans overflow-x-hidden pb-20">
+      {/* RADIANT GLOW BACKGROUND */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-900/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-900/10 blur-[120px] rounded-full" />
       </div>
 
-      {/* HEADER / NAVIGATION */}
-      <nav className="relative z-10 max-w-7xl mx-auto px-8 py-10 flex justify-between items-start">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
-              <Moon className="text-emerald-400" size={24} />
-            </motion.div>
-            <h1 className="text-2xl font-extralight tracking-[0.4em] uppercase text-white">
-              Selene's Garden
-            </h1>
+      {/* HEADER */}
+      <nav className="relative z-10 max-w-6xl mx-auto px-8 py-12 flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+            <Moon className="text-emerald-400" size={28} />
           </div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/60 font-bold ml-10">
-            Mystical Herbarium
-          </p>
+          <div>
+            <h1 className="text-2xl font-light tracking-[0.4em] uppercase text-white leading-none">Selene</h1>
+            <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-500/60 font-bold mt-1">Alchemist's Dashboard</p>
+          </div>
         </div>
 
-        {/* LUNAR BADGE */}
-        <div className="bg-white/5 border border-white/10 backdrop-blur-md px-5 py-3 rounded-2xl flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold leading-none mb-1">
-              {moonData.phase}
-            </p>
-            <p className="text-xs text-emerald-300 font-light italic">
-              {moonData.illumination}% Illuminated
-            </p>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500/20 to-emerald-400/40 border border-emerald-500/30 flex items-center justify-center">
-            <Sparkles size={14} className="text-emerald-300" />
-          </div>
+        {/* TAB NAVIGATION */}
+        <div className="flex bg-white/5 border border-white/10 p-1.5 rounded-2xl backdrop-blur-xl">
+          {[
+            { id: 'library', icon: <Book size={16} />, label: 'Library' },
+            { id: 'calendar', icon: <Calendar size={16} />, label: 'Moon' },
+            { id: 'altar', icon: <PenTool size={16} />, label: 'Altar' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all ${
+                activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/20' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="relative z-10 max-w-7xl mx-auto px-8 pb-20">
-        <header className="max-w-2xl mb-16 text-center mx-auto">
-          <div className="flex items-center justify-center gap-4 mb-4 text-emerald-500/40">
-            <div className="h-[1px] w-12 bg-current" />
-            <Sprout size={20} />
-            <div className="h-[1px] w-12 bg-current" />
-          </div>
-          <h2 className="text-4xl font-serif italic text-white mb-4">Botanical Collection</h2>
-          <p className="text-slate-400 font-light leading-relaxed">
-            Cultivate rare specimens under the moonlight. Each plant responds to your care and the celestial cycle.
-          </p>
-        </header>
-
-        {/* HERB GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {herbs.map((herb) => (
+      {/* MAIN CONTENT AREA */}
+      <main className="relative z-10 max-w-6xl mx-auto px-8">
+        <AnimatePresence mode="wait">
+          
+          {/* TAB 1: LIBRARY */}
+          {activeTab === 'library' && (
             <motion.div 
-              key={herb.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="group relative bg-[#061411] border border-white/5 rounded-[2rem] p-8 hover:border-emerald-500/30 transition-all duration-500"
+              key="lib" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              {/* CARD TOP INFO */}
-              <div className="flex justify-between items-start mb-8">
-                <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-400">
-                  {herb.icon}
+              {MATERIA_DATA.map(item => (
+                <div key={item.id} className="bg-white/[0.03] border border-white/5 p-8 rounded-[2.5rem] hover:border-emerald-500/30 transition-all group">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 ${item.color}`}>{item.icon}</div>
+                    <span className="text-[9px] font-bold tracking-widest uppercase bg-white/5 px-3 py-1 rounded-full text-slate-500 border border-white/5">{item.type}</span>
+                  </div>
+                  <h3 className="text-2xl font-serif italic text-white mb-2">{item.name}</h3>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-emerald-500/60 font-bold mb-4">{item.element} · {item.property}</p>
+                  <p className="text-sm text-slate-400 font-light leading-relaxed mb-6">{item.description}</p>
+                  <button className="w-full py-3 rounded-xl border border-white/5 bg-white/5 text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:bg-emerald-500/10 hover:text-emerald-300 transition-all">Details</button>
                 </div>
-                <span className="text-[9px] font-bold tracking-[0.2em] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
-                  {herb.rarity}
-                </span>
-              </div>
-
-              {/* CARD TEXT */}
-              <h3 className="text-2xl font-serif italic text-white mb-3 group-hover:text-emerald-300 transition-colors">
-                {herb.name}
-              </h3>
-              <p className="text-sm text-slate-400 font-light leading-relaxed mb-8 h-12 overflow-hidden">
-                {herb.description}
-              </p>
-
-              {/* META INFO */}
-              <div className="flex items-center gap-2 mb-6 text-[10px] font-bold uppercase tracking-widest text-emerald-500/60">
-                <Wind size={12} />
-                <span>Element · {herb.element}</span>
-              </div>
-
-              {/* PROGRESS BAR */}
-              <div className="space-y-3 mb-8">
-                <div className="flex justify-between text-[10px] tracking-widest font-bold">
-                  <span className="text-slate-500 uppercase">Growth</span>
-                  <span className="text-emerald-400">{herb.growth}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${herb.growth}%` }}
-                    className={`h-full bg-gradient-to-r ${herb.color} shadow-[0_0_10px_rgba(52,211,153,0.3)]`}
-                  />
-                </div>
-              </div>
-
-              {/* INTERACTIVE BUTTON */}
-              <button 
-                onClick={() => nurtureHerb(herb.id)}
-                disabled={herb.growth >= 100}
-                className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 group/btn ${
-                  herb.growth >= 100 
-                    ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 cursor-default'
-                    : 'bg-emerald-500/5 border border-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 hover:border-emerald-500/40'
-                }`}
-              >
-                {herb.growth >= 100 ? (
-                  <>
-                    <Sparkles size={16} />
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Fully Bloomed</span>
-                  </>
-                ) : (
-                  <>
-                    <Sprout size={16} className="group-hover/btn:scale-110 transition-transform" />
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-emerald-400">Nurture</span>
-                  </>
-                )}
-              </button>
+              ))}
             </motion.div>
-          ))}
-        </div>
+          )}
+
+          {/* TAB 2: MOON CALENDAR */}
+          {activeTab === 'calendar' && (
+            <motion.div 
+              key="cal" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              className="max-w-3xl mx-auto text-center py-20 bg-white/[0.02] border border-white/5 rounded-[3rem] backdrop-blur-3xl"
+            >
+              <div className="mb-10 inline-flex p-6 rounded-full bg-emerald-500/5 border border-emerald-500/10 text-emerald-400">
+                <Moon size={48} className="animate-pulse" />
+              </div>
+              <h2 className="text-4xl font-serif italic text-white mb-4">{moonData.phase}</h2>
+              <p className="text-emerald-400 tracking-[0.3em] uppercase text-xs mb-12">{moonData.illumination}% Illumination</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-12 text-left">
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Optimal Ritual</p>
+                  <p className="text-sm text-slate-300">{moonData.illumination > 50 ? 'Charging crystals, outward expansion, and divination.' : 'Intention setting, shadow work, and inward reflection.'}</p>
+                </div>
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Lunar Guidance</p>
+                  <p className="text-sm text-slate-300">The current energy favors {moonData.illumination > 50 ? 'visibility and action.' : 'rest and preparation.'}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 3: INTENTION ALTAR */}
+          {activeTab === 'altar' && (
+            <motion.div 
+              key="alt" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              className="max-w-2xl mx-auto"
+            >
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-serif italic text-white mb-4">The Intention Altar</h2>
+                <p className="text-slate-400 text-sm font-light">Cast your focus into the digital aether. Set your intention for this lunar cycle.</p>
+              </div>
+              <div className="bg-white/[0.03] border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-xl">
+                <textarea 
+                  value={intent}
+                  onChange={(e) => setIntent(e.target.value)}
+                  placeholder="Enter your ritual intention..."
+                  className="w-full bg-transparent border-none text-xl font-serif italic text-emerald-100 placeholder:text-slate-700 focus:ring-0 h-40 resize-none"
+                />
+                <div className="h-[1px] w-full bg-white/10 my-6" />
+                <button className="w-full py-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-emerald-500/20 transition-all">
+                  Bind Intention
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
