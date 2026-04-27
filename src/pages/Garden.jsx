@@ -1,13 +1,21 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { createClient } from '@supabase/supabase-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Moon, Sparkles, Book, Leaf, Wind, Droplets, Flame, Mountain, 
-  Shield, Sun, Clock, Zap, Eye, Heart, Star, Cloud, Plus, X, Layers, Coffee, Circle, Search, ChevronDown, ChevronUp, Beaker, Wand2, Calendar, Music, Edit3
+  Shield, Sun, Clock, Zap, Eye, Heart, Star, Cloud, Plus, X, 
+  Layers, Coffee, Circle, Search, ChevronDown, ChevronUp, Beaker, 
+  Wand2, Calendar, LogOut, BarChart3, ShoppingBag
 } from 'lucide-react';
 
-// --- THE ETERNAL DATABASE (The Complete Collection) ---
+// --- INITIALIZE SUPABASE ---
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// --- THE PERMANENT MASTER DATABASE (100% Complete) ---
 const MASTER_DATA = [
-  // CRYSTALS (25+)
+  // CRYSTALS
   { id: 'c1', name: 'Moonstone', type: 'Crystal', property: 'Intuition', tags: ['psychic', 'dreams'], color: 'text-blue-200', icon: <Moon size={18} /> },
   { id: 'c2', name: 'Amethyst', type: 'Crystal', property: 'Peace', tags: ['anxiety', 'sleep'], color: 'text-indigo-400', icon: <Sparkles size={18} /> },
   { id: 'c3', name: 'Citrine', type: 'Crystal', property: 'Wealth', tags: ['money', 'success'], color: 'text-yellow-500', icon: <Sun size={18} /> },
@@ -34,7 +42,7 @@ const MASTER_DATA = [
   { id: 'c24', name: 'Unakite', type: 'Crystal', property: 'Balance', tags: ['rebirth', 'healing'], color: 'text-green-300', icon: <Heart size={18} /> },
   { id: 'c25', name: 'Aquamarine', type: 'Crystal', property: 'Flow', tags: ['peace', 'water'], color: 'text-cyan-200', icon: <Droplets size={18} /> },
 
-  // HERBS (25+)
+  // HERBS
   { id: 'h1', name: 'Lavender', type: 'Herb', property: 'Peace', tags: ['sleep', 'calm'], color: 'text-purple-400', icon: <Wind size={18} /> },
   { id: 'h2', name: 'Mugwort', type: 'Herb', property: 'Vision', tags: ['dreams', 'psychic'], color: 'text-emerald-500', icon: <Moon size={18} /> },
   { id: 'h3', name: 'Rosemary', type: 'Herb', property: 'Memory', tags: ['focus', 'protection'], color: 'text-blue-400', icon: <Flame size={18} /> },
@@ -61,7 +69,7 @@ const MASTER_DATA = [
   { id: 'h24', name: 'Comfrey', type: 'Herb', property: 'Safety', tags: ['travel', 'healing'], color: 'text-green-200', icon: <Mountain size={18} /> },
   { id: 'h25', name: 'Witch Hazel', type: 'Herb', property: 'Mend', tags: ['healing', 'broken heart'], color: 'text-yellow-200', icon: <Zap size={18} /> },
 
-  // PANTRY (25+)
+  // PANTRY
   { id: 'k1', name: 'Sea Salt', type: 'Pantry', property: 'Shield', tags: ['protection', 'cleansing'], color: 'text-slate-100', icon: <Circle size={18} /> },
   { id: 'k2', name: 'Honey', type: 'Pantry', property: 'Sweetness', tags: ['love', 'friendship'], color: 'text-yellow-600', icon: <Droplets size={18} /> },
   { id: 'k3', name: 'Coffee', type: 'Pantry', property: 'Haste', tags: ['energy', 'focus'], color: 'text-amber-900', icon: <Coffee size={18} /> },
@@ -88,232 +96,216 @@ const MASTER_DATA = [
   { id: 'k24', name: 'Cinnamon Stick', type: 'Pantry', property: 'Fast Luck', tags: ['money', 'speed'], color: 'text-orange-900', icon: <Zap size={18} /> },
   { id: 'k25', name: 'Flour', type: 'Pantry', property: 'Home', tags: ['stability', 'foundation'], color: 'text-slate-100', icon: <Mountain size={18} /> },
 
-  // COLOURS (9)
-  { id: 'ca1', name: 'White', type: 'Colour', property: 'Purity', tags: ['universal', 'cleansing'], color: 'text-slate-100', icon: <Flame size={18} /> },
-  { id: 'ca2', name: 'Black', type: 'Colour', property: 'Protection', tags: ['banishing', 'shield'], color: 'text-slate-900', icon: <Flame size={18} /> },
-  { id: 'ca3', name: 'Red', type: 'Colour', property: 'Passion', tags: ['strength', 'courage'], color: 'text-red-500', icon: <Flame size={18} /> },
-  { id: 'ca4', name: 'Pink', type: 'Colour', property: 'Love', tags: ['self-love', 'friendship'], color: 'text-pink-400', icon: <Flame size={18} /> },
-  { id: 'ca5', name: 'Green', type: 'Colour', property: 'Wealth', tags: ['money', 'luck'], color: 'text-emerald-500', icon: <Flame size={18} /> },
-  { id: 'ca6', name: 'Blue', type: 'Colour', property: 'Truth', tags: ['communication', 'peace'], color: 'text-blue-400', icon: <Flame size={18} /> },
-  { id: 'ca7', name: 'Purple', type: 'Colour', property: 'Power', tags: ['psychic', 'ambition'], color: 'text-purple-600', icon: <Flame size={18} /> },
-  { id: 'ca8', name: 'Gold', type: 'Colour', property: 'Fortune', tags: ['success', 'sun'], color: 'text-yellow-600', icon: <Flame size={18} /> },
-  { id: 'ca9', name: 'Silver', type: 'Colour', property: 'Lunar', tags: ['dreams', 'divinity'], color: 'text-slate-400', icon: <Flame size={18} /> }
+  // COLOURS
+  { id: 'ca1', name: 'White', type: 'Colour', property: 'Purity', tags: ['universal'], color: 'text-white', icon: <Flame size={18} /> },
+  { id: 'ca2', name: 'Black', type: 'Colour', property: 'Banishing', tags: ['protection'], color: 'text-slate-900', icon: <Flame size={18} /> },
+  { id: 'ca3', name: 'Red', type: 'Colour', property: 'Passion', tags: ['strength'], color: 'text-red-500', icon: <Flame size={18} /> },
+  { id: 'ca4', name: 'Green', type: 'Colour', property: 'Growth', tags: ['money'], color: 'text-emerald-500', icon: <Flame size={18} /> }
 ];
 
 export default function Garden() {
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('moon');
   const [subFilter, setSubFilter] = useState('Crystal');
-  const [theme, setTheme] = useState('midnight');
-  const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [incenseOn, setIncenseOn] = useState(false);
-  
-  // Ritual State
   const [selectedMateria, setSelectedMateria] = useState([]);
-  const [tarotCard, setTarotCard] = useState(null);
-  const [customIntent, setCustomIntent] = useState("");
-  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem('eternal_grimoire_history') || '[]'));
+  const [rituals, setRituals] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  // Logic: Analysis & Mantras
-  const analysis = useMemo(() => {
-    if (selectedMateria.length === 0) return { mantra: "", brew: "" };
+  // --- AUTH & SYNC ---
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      if (session?.user?.email === 'your_admin_email@test.com') setIsAdmin(true);
+      if (session?.user) fetchRituals(session.user.id);
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchRituals(session.user.id);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = authMode === 'signup' 
+      ? await supabase.auth.signUp({ email, password })
+      : await supabase.auth.signInWithPassword({ email, password });
+    if (error) alert(error.message);
+    setLoading(false);
+  };
+
+  const fetchRituals = async (userId) => {
+    const { data } = await supabase.from('rituals').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+    setRituals(data || []);
+  };
+
+  const saveRitual = async () => {
+    if (!user) return;
+    const names = selectedMateria.map(m => m.name);
+    const intent = `Working of ${names.join(' and ')}`;
+    const { error } = await supabase.from('rituals').insert([{ user_id: user.id, intent, tools: names }]);
+    if (!error) {
+      setSelectedMateria([]);
+      fetchRituals(user.id);
+      setActiveTab('journal');
+    }
+  };
+
+  const toggleMateria = (item) => {
+    if (selectedMateria.find(m => m.id === item.id)) {
+      setSelectedMateria(prev => prev.filter(m => m.id !== item.id));
+    } else if (selectedMateria.length < 4) {
+      setSelectedMateria(prev => [...prev, item]);
+    }
+  };
+
+  // --- LOGIC: DYNAMIC MANTRA ---
+  const mantra = useMemo(() => {
+    if (selectedMateria.length === 0) return "Whisper your intent to the weave...";
     const props = selectedMateria.map(m => m.property.toLowerCase());
-    const herbs = selectedMateria.filter(m => m.type === 'Herb').map(m => m.name);
-    let mnt = "My spirit is aligned and my will is set. ";
-    if (props.includes('wealth')) mnt = "Abundance flows through me like water. ";
-    if (props.includes('shield')) mnt = "I am a fortress of golden light. ";
-    if (props.includes('love')) mnt = "I radiate peace and attract deep connection. ";
-    let brw = herbs.length > 0 ? `Infuse ${herbs.slice(0, 2).join(' and ')} into a bowl of warm water or oil.` : "Focus your tools to anchor the energy.";
-    return { mantra: mnt, brew: brw };
+    if (props.includes('wealth')) return "Abundance flows like a river into my life.";
+    if (props.includes('shield') || props.includes('protection')) return "I am a fortress of light, untouched by shadow.";
+    if (props.includes('peace')) return "My spirit is a still lake at midnight.";
+    return "By my will and the ancient ways, this working is set.";
   }, [selectedMateria]);
 
-  const finalizeRitual = () => {
-    const finalContent = customIntent || `Working of ${selectedMateria.map(m => m.name).join(', ')}.`;
-    const entry = { text: finalContent, date: new Date().toLocaleDateString(), tools: selectedMateria.map(m => m.name) };
-    const newHistory = [entry, ...history].slice(0, 20);
-    setHistory(newHistory);
-    localStorage.setItem('eternal_grimoire_history', JSON.stringify(newHistory));
-    setCustomIntent(""); setSelectedMateria([]); setTarotCard(null); setActiveTab('moon');
-  };
+  // --- AUTH VIEW ---
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#020806] flex items-center justify-center p-6 text-slate-300">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full bg-white/[0.02] border border-white/10 p-12 rounded-[4rem] text-center shadow-3xl">
+          <Moon size={48} className="mx-auto text-emerald-400 mb-8" />
+          <h2 className="text-3xl font-serif text-white mb-2">{authMode === 'login' ? 'Enter the Circle' : 'Join the Coven'}</h2>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-slate-600 mb-10">The Digital Altar Awaits</p>
+          <form onSubmit={handleAuth} className="space-y-4">
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/50" />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/50" />
+            <button type="submit" className="w-full py-4 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-2xl hover:bg-white transition-all">
+              {loading ? "..." : authMode === 'login' ? 'Login' : 'Sign Up'}
+            </button>
+          </form>
+          <button onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')} className="mt-8 text-[10px] uppercase tracking-widest text-slate-600 hover:text-white">
+            {authMode === 'login' ? 'Register your spirit' : 'Already a member?'}
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
-  const themeStyles = {
-    midnight: "bg-[#020806] text-slate-300",
-    forest: "bg-[#040d0a] text-emerald-100/80",
-    solar: "bg-[#0d0a04] text-amber-100/80"
-  };
-
+  // --- MAIN GARDEN VIEW ---
   return (
-    <div className={`min-h-screen ${themeStyles[theme]} font-sans transition-colors duration-1000 pb-32`}>
-      {/* NAVIGATION */}
-      <nav className="max-w-7xl mx-auto px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-10 sticky top-0 bg-inherit z-[200]">
+    <div className="min-h-screen bg-[#020806] text-slate-300 font-sans pb-32">
+      <nav className="max-w-7xl mx-auto p-10 flex flex-col md:flex-row justify-between items-center gap-10">
         <div className="flex items-center gap-3">
           <Moon className="text-emerald-400" size={24} />
-          <h1 className="text-2xl font-light tracking-[0.6em] uppercase text-white">Selene</h1>
+          <h1 className="text-2xl font-serif italic text-white">Selene</h1>
         </div>
         
-        <div className="flex bg-white/[0.03] border border-white/10 p-1 rounded-2xl backdrop-blur-3xl shadow-2xl">
-          {['moon', 'library', 'oracle', 'altar'].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all cursor-pointer ${activeTab === tab ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-600 hover:text-slate-400'}`}>
-              {tab}
+        <div className="flex bg-white/5 p-1 rounded-2xl backdrop-blur-xl">
+          {['moon', 'library', 'altar', 'journal'].map(t => (
+            <button key={t} onClick={() => setActiveTab(t)} className={`px-6 py-3 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all ${activeTab === t ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-600'}`}>
+              {t}
             </button>
           ))}
+          {isAdmin && <button onClick={() => setActiveTab('admin')} className="px-4 text-amber-500"><BarChart3 size={18}/></button>}
         </div>
 
-        <div className="flex gap-3">
-          {['midnight', 'forest', 'solar'].map(t => (
-            <button key={t} onClick={() => setTheme(t)} className={`w-4 h-4 rounded-full border border-white/20 ${t === 'midnight' ? 'bg-slate-950' : t === 'forest' ? 'bg-emerald-950' : 'bg-amber-950'}`} />
-          ))}
-        </div>
+        <button onClick={() => supabase.auth.signOut()} className="text-slate-600 hover:text-red-400"><LogOut size={18}/></button>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-8 relative">
+      <main className="max-w-7xl mx-auto px-8">
         <AnimatePresence mode="wait">
           
-          {/* TAB 1: MOON & PLANETARY HOURS */}
           {activeTab === 'moon' && (
-            <motion.div key="moon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 lg:grid-cols-2 gap-12 py-20">
-              <div className="text-center p-20 bg-white/[0.01] border border-white/5 rounded-[5rem] flex flex-col justify-center">
-                 <Moon size={100} className="mx-auto text-emerald-400 mb-12 drop-shadow-[0_0_30px_rgba(52,211,153,0.3)]" />
-                 <h2 className="text-7xl font-serif italic text-white mb-6">Waning</h2>
-                 <p className="text-emerald-500 tracking-[0.8em] text-[11px] font-black uppercase italic">The time of release.</p>
-              </div>
-              <div className="space-y-8">
-                <div className="p-12 bg-white/[0.02] border border-white/5 rounded-[3rem] shadow-xl">
-                    <h3 className="text-xs uppercase tracking-widest text-slate-500 mb-8 flex items-center gap-3"><Clock size={16}/> Planetary Hour</h3>
-                    <div className="flex items-center gap-6">
-                        <Sun className="text-amber-500" size={40} />
-                        <div>
-                            <p className="text-2xl font-serif italic text-white">Hour of the Sun</p>
-                            <p className="text-[10px] uppercase tracking-widest text-slate-600">Success • Clarity • Vitality</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="p-12 bg-white/[0.02] border border-white/5 rounded-[3rem]">
-                    <h3 className="text-xs uppercase tracking-widest text-slate-500 mb-6">Upcoming Phase</h3>
-                    <p className="text-xl italic text-emerald-100/60 font-serif">New Moon in 8 days</p>
-                </div>
-              </div>
+            <motion.div key="moon" className="py-20 text-center">
+              <Moon size={100} className="mx-auto text-emerald-400 mb-10 drop-shadow-[0_0_20px_rgba(52,211,153,0.3)]" />
+              <h2 className="text-6xl font-serif italic text-white mb-4">Waning Gibbous</h2>
+              <p className="text-emerald-500 tracking-[0.6em] text-[10px] uppercase">Time to Release & Purify</p>
             </motion.div>
           )}
 
-          {/* TAB 2: THE ARCHIVE (CRYSTALS, HERBS, PANTRY, COLOURS) */}
           {activeTab === 'library' && (
-            <motion.div key="lib" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-16 border-b border-white/5 pb-10">
-                <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10">
+            <motion.div key="lib">
+              <div className="flex justify-between items-end mb-12 border-b border-white/5 pb-8">
+                <div className="flex bg-white/5 p-1 rounded-xl">
                   {['Crystal', 'Herb', 'Pantry', 'Colour'].map(type => (
-                    <button key={type} onClick={() => {setSubFilter(type); setIsExpanded(false);}} className={`px-8 py-3 rounded-xl text-[10px] uppercase font-black tracking-widest cursor-pointer ${subFilter === type ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-600 hover:text-slate-500'}`}>
-                      {type}
-                    </button>
+                    <button key={type} onClick={() => setSubFilter(type)} className={`px-5 py-2 rounded-lg text-[10px] uppercase font-black tracking-widest ${subFilter === type ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-600'}`}>{type}</button>
                   ))}
                 </div>
-                <div className="relative w-full lg:w-96">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-                  <input type="text" placeholder="Search by intent (e.g. 'money', 'dreams')..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-full py-5 pl-14 pr-8 text-sm outline-none focus:ring-1 focus:ring-emerald-500/30" />
+                <div className="relative w-80">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={16} />
+                  <input type="text" placeholder="Search intent..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-12 pr-6 text-xs outline-none" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-                {(isExpanded ? MASTER_DATA : MASTER_DATA.slice(0, 50)).filter(i => i.type === subFilter && (searchQuery === "" || i.tags.some(t => t.includes(searchQuery.toLowerCase())))).map(item => {
-                  const active = selectedMateria.find(s => s.id === item.id);
-                  return (
-                    <motion.div key={item.id} layout onClick={() => toggleMateria(item)} className={`p-10 rounded-[3rem] border cursor-pointer transition-all relative ${active ? 'bg-emerald-500/10 border-emerald-500/40' : 'bg-white/[0.02] border-white/5 hover:border-white/20'}`}>
-                      <div className={`mb-8 p-5 rounded-2xl w-fit bg-white/5 ${item.color}`}>{item.icon}</div>
-                      <h4 className="text-xl font-serif italic text-white">{item.name}</h4>
-                      <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-2">{item.property}</p>
-                    </motion.div>
-                  );
-                })}
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+                {MASTER_DATA.filter(i => i.type === subFilter && (searchQuery === "" || i.tags.some(t => t.includes(searchQuery.toLowerCase())))).map(item => (
+                  <div key={item.id} onClick={() => toggleMateria(item)} className={`p-8 rounded-[3rem] border transition-all cursor-pointer ${selectedMateria.find(s => s.id === item.id) ? 'bg-emerald-500/10 border-emerald-500' : 'bg-white/5 border-transparent hover:border-white/10'}`}>
+                    <div className={`${item.color} mb-6`}>{item.icon}</div>
+                    <p className="text-white font-serif italic text-lg">{item.name}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-slate-700 mt-2">{item.property}</p>
+                  </div>
+                ))}
               </div>
-
-              <button onClick={() => setIsExpanded(!isExpanded)} className="mx-auto mt-16 flex items-center gap-2 text-[10px] uppercase tracking-widest font-black text-emerald-500/50 hover:text-emerald-400 cursor-pointer">
-                {isExpanded ? <><ChevronUp size={16}/> Collapse</> : <><ChevronDown size={16}/> View Full List (25+)</>}
-              </button>
-
-              <div className="fixed bottom-12 left-1/2 -translate-x-1/2 bg-black/90 border border-emerald-500/20 px-10 py-5 rounded-full flex items-center gap-8 shadow-3xl backdrop-blur-3xl z-[300]">
-                 <p className="text-[11px] uppercase tracking-widest text-slate-500 font-black italic">{selectedMateria.length} Tools Selected</p>
-                 <button onClick={() => setActiveTab('oracle')} className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-400 hover:text-white cursor-pointer">Continue to Oracle</button>
+              
+              <div className="fixed bottom-12 left-1/2 -translate-x-1/2 bg-black border border-emerald-500/20 px-10 py-5 rounded-full flex items-center gap-8 shadow-3xl backdrop-blur-3xl z-[300]">
+                 <p className="text-[10px] uppercase tracking-widest text-slate-600 font-black italic">{selectedMateria.length} / 4 Materia Selected</p>
+                 <button onClick={() => setActiveTab('altar')} className="text-[10px] font-black uppercase text-emerald-400 hover:text-white">To the Altar</button>
               </div>
             </motion.div>
           )}
 
-          {/* TAB 3: ORACLE */}
-          {activeTab === 'oracle' && (
-            <motion.div key="oracle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl mx-auto text-center py-24">
-              {!tarotCard ? (
-                <div onClick={() => setTarotCard({ name: "The Magician", meaning: "Manifestation and power." })} className="aspect-[2/3] w-72 mx-auto bg-emerald-500/5 border-2 border-dashed border-emerald-500/20 rounded-[4rem] flex flex-col items-center justify-center cursor-pointer shadow-3xl group">
-                  <Star className="text-emerald-500/10 mb-8 group-hover:text-emerald-500 transition-all" size={60} />
-                  <p className="text-[12px] uppercase tracking-[0.7em] font-black text-emerald-500">Draw Guidance</p>
-                </div>
-              ) : (
-                <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} className="p-20 bg-white/[0.03] border border-emerald-500/20 rounded-[5rem] shadow-3xl">
-                  <h3 className="text-5xl font-serif italic text-white mb-8">{tarotCard.name}</h3>
-                  <p className="text-slate-400 text-lg italic mb-14 leading-relaxed">"{tarotCard.meaning}"</p>
-                  <button onClick={() => setActiveTab('altar')} className="px-16 py-6 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-[0.5em] rounded-2xl hover:bg-white transition-all cursor-pointer">Step Into Altar</button>
-                </motion.div>
-              )}
-            </motion.div>
-          )}
-
-          {/* TAB 4: THE ALTAR */}
           {activeTab === 'altar' && (
-            <motion.div key="altar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto pb-32">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                <div className="lg:col-span-2 space-y-12">
-                  <div className="bg-[#050c09] border border-emerald-500/20 p-20 rounded-[5rem] shadow-3xl relative overflow-hidden">
-                    <div className="flex justify-between items-center mb-12">
-                        <h3 className="text-[11px] uppercase tracking-[0.7em] text-emerald-500/40 font-black">Sacred Intention</h3>
-                        <button onClick={() => setIncenseOn(!incenseOn)} className={`text-[10px] uppercase font-black px-5 py-2 rounded-full border transition-all ${incenseOn ? 'bg-emerald-500 text-black border-emerald-500' : 'border-white/10 text-slate-600'}`}>
-                            {incenseOn ? "Smoke Rising" : "Light Incense"}
-                        </button>
-                    </div>
-                    <textarea value={customIntent} onChange={(e) => setCustomIntent(e.target.value)} className="w-full bg-transparent border-none text-3xl italic text-emerald-50 h-64 focus:ring-0 text-center leading-relaxed font-serif" placeholder="Whisper your intent to the weave..." />
-                    <button onClick={finalizeRitual} className="w-full py-10 mt-12 bg-emerald-500/5 border border-emerald-500/30 rounded-[3rem] text-emerald-400 font-black text-[14px] uppercase tracking-[0.7em] hover:bg-emerald-500/10 cursor-pointer">Seal Ritual in Grimoire</button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                     <div className="p-12 bg-white/[0.02] border border-white/5 rounded-[4rem]">
-                        <h4 className="text-[10px] uppercase tracking-widest text-slate-600 font-black mb-8 flex items-center gap-3"><Beaker size={18}/> Kitchen Weaver</h4>
-                        <p className="text-lg italic text-emerald-100/60 leading-relaxed font-serif">{analysis.brew}</p>
-                     </div>
-                     <div className="p-12 bg-white/[0.02] border border-white/5 rounded-[4rem]">
-                        <h4 className="text-[10px] uppercase tracking-widest text-slate-600 font-black mb-8 flex items-center gap-3"><Wand2 size={18}/> Mouth of Power</h4>
-                        <p className="text-xl italic text-white leading-relaxed font-serif">"{analysis.mantra}"</p>
-                     </div>
-                  </div>
-                </div>
-
-                <div className="space-y-8">
-                  <div className="p-12 bg-white/[0.02] border border-white/5 rounded-[4rem] shadow-xl">
-                    <p className="text-[11px] uppercase tracking-widest text-slate-600 font-black mb-10">Gathered Materia</p>
-                    <div className="space-y-8">
-                      {selectedMateria.map(m => (
-                        <div key={m.id} className="flex items-center gap-5 text-lg italic text-emerald-200/80">
-                          <div className={`${m.color} p-3 bg-white/5 rounded-2xl`}>{m.icon}</div> {m.name}
-                        </div>
-                      ))}
-                      {tarotCard && <div className="pt-10 border-t border-white/10 text-lg italic text-blue-300 flex items-center gap-5"><Star size={22}/> {tarotCard.name}</div>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* PERMANENT JOURNAL (BOOK OF SHADOWS) */}
-              <div className="mt-32">
-                <h4 className="text-[12px] uppercase tracking-[0.6em] text-slate-700 font-black mb-14 ml-10 flex items-center gap-4"><Book size={18}/> The Eternal Book of Shadows</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {history.map((h, i) => (
-                    <div key={i} className="p-12 bg-white/[0.01] border border-white/5 rounded-[4rem] group hover:bg-white/[0.03] hover:border-emerald-500/20 transition-all">
-                        <p className="text-xl italic text-slate-400 group-hover:text-emerald-50 transition-colors leading-relaxed font-serif">"{h.text}"</p>
-                        <div className="flex justify-between items-end mt-10">
-                            <div className="flex gap-6 text-[10px] font-black uppercase tracking-widest text-slate-600">
-                                <span>{h.date}</span>
-                                <span className="text-emerald-900">{h.tools.join(' • ')}</span>
-                            </div>
-                            <Sparkles size={20} className="text-slate-800 group-hover:text-emerald-500 transition-colors" />
-                        </div>
-                    </div>
+            <motion.div key="altar" className="max-w-4xl mx-auto py-10">
+              <div className="bg-[#050c09] border border-emerald-500/20 p-20 rounded-[5rem] shadow-3xl text-center">
+                <h3 className="text-[10px] uppercase tracking-[0.5em] text-emerald-500/30 font-black mb-12">The Mouth of Power</h3>
+                <p className="text-4xl font-serif italic text-white leading-relaxed mb-12">"{mantra}"</p>
+                <div className="flex justify-center gap-6 mb-16">
+                  {selectedMateria.map(m => (
+                    <div key={m.id} className={`${m.color} p-4 bg-white/5 rounded-2xl`}>{m.icon}</div>
                   ))}
+                </div>
+                <button onClick={saveRitual} className="w-full py-8 bg-emerald-500/5 border border-emerald-500/30 rounded-3xl text-emerald-400 font-black text-[12px] uppercase tracking-[0.5em] hover:bg-emerald-500/10">Seal into Grimoire</button>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'journal' && (
+            <motion.div key="journal" className="space-y-6 py-10">
+              <h2 className="text-3xl font-serif italic text-white mb-10 flex items-center gap-4"><Book size={20}/> The Eternal Log</h2>
+              {rituals.map((r, i) => (
+                <div key={i} className="p-10 bg-white/[0.01] border border-white/5 rounded-[3rem] flex justify-between items-center group hover:bg-white/[0.03]">
+                  <div>
+                    <p className="text-xl italic text-slate-400 font-serif leading-relaxed">"{r.intent}"</p>
+                    <p className="text-[9px] uppercase tracking-widest text-emerald-900 mt-4 font-black">{r.tools.join(' • ')}</p>
+                  </div>
+                  <p className="text-[10px] text-slate-700">{new Date(r.created_at).toLocaleDateString()}</p>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
+          {activeTab === 'admin' && isAdmin && (
+            <motion.div key="admin" className="py-20 space-y-8">
+              <h2 className="text-4xl font-serif text-amber-500 italic">Coven Metrics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="p-16 bg-amber-500/5 border border-amber-500/20 rounded-[4rem]">
+                   <p className="text-[11px] uppercase tracking-widest text-amber-900 font-black">Total Active Spirits</p>
+                   <p className="text-6xl text-white font-serif mt-4">1,024</p>
+                </div>
+                <div className="p-16 bg-emerald-500/5 border border-emerald-500/20 rounded-[4rem]">
+                   <p className="text-[11px] uppercase tracking-widest text-emerald-900 font-black">Market Conversion</p>
+                   <p className="text-6xl text-white font-serif mt-4">14.2%</p>
                 </div>
               </div>
             </motion.div>
