@@ -1,14 +1,16 @@
-import React from 'react';
-import Garden from './pages/Garden'; // Ensure this matches your file path exactly
+import React, { Suspense } from 'react';
+import Garden from './pages/Garden'; 
 
+// This App component acts as the 'Aether' (the space that holds everything)
 function App() {
   return (
-    <div className="app-container">
-      {/* This is the main entry point. 
-          The Garden component holds the logic for the 
-          Lunar Calendar, Materia Medica, and Altar.
+    <div className="min-h-screen bg-[#040d0a] selection:bg-emerald-500/30">
+      {/* Suspense is a safety net. If Garden takes a millisecond to load, 
+          it shows a dark screen instead of a white flash.
       */}
-      <Garden />
+      <Suspense fallback={<div className="min-h-screen bg-[#040d0a]" />}>
+        <Garden />
+      </Suspense>
     </div>
   );
 }
