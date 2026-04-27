@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { createClient } from '@supabase/supabase-client';
+// Essential for Base44: Imports Supabase directly from the web
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-client/+esm';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Moon, Sparkles, Book, Leaf, Wind, Droplets, Flame, Mountain, 
@@ -8,15 +9,15 @@ import {
   Wand2, Calendar, LogOut, BarChart3, ShoppingBag
 } from 'lucide-react';
 
-// --- INITIALIZE SUPABASE ---
-// Link your project at supabase.com to get these keys
+// --- CONFIGURATION ---
+// IMPORTANT: Replace these with your keys from your Supabase Dashboard
 const SUPABASE_URL = 'YOUR_SUPABASE_URL';
 const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- THE MASTER DATABASE (Full 80+ Items) ---
+// --- THE MASTER DATABASE (85 TOTAL ITEMS) ---
 const MASTER_DATA = [
-  // CRYSTALS
+  // CRYSTALS (25)
   { id: 'c1', name: 'Moonstone', type: 'Crystal', property: 'Intuition', tags: ['psychic', 'dreams'], color: 'text-blue-200', icon: <Moon size={18} /> },
   { id: 'c2', name: 'Amethyst', type: 'Crystal', property: 'Peace', tags: ['anxiety', 'sleep'], color: 'text-indigo-400', icon: <Sparkles size={18} /> },
   { id: 'c3', name: 'Citrine', type: 'Crystal', property: 'Wealth', tags: ['money', 'success'], color: 'text-yellow-500', icon: <Sun size={18} /> },
@@ -43,7 +44,7 @@ const MASTER_DATA = [
   { id: 'c24', name: 'Unakite', type: 'Crystal', property: 'Balance', tags: ['rebirth', 'healing'], color: 'text-green-300', icon: <Heart size={18} /> },
   { id: 'c25', name: 'Aquamarine', type: 'Crystal', property: 'Flow', tags: ['peace', 'water'], color: 'text-cyan-200', icon: <Droplets size={18} /> },
 
-  // HERBS
+  // HERBS (25)
   { id: 'h1', name: 'Lavender', type: 'Herb', property: 'Peace', tags: ['sleep', 'calm'], color: 'text-purple-400', icon: <Wind size={18} /> },
   { id: 'h2', name: 'Mugwort', type: 'Herb', property: 'Vision', tags: ['dreams', 'psychic'], color: 'text-emerald-500', icon: <Moon size={18} /> },
   { id: 'h3', name: 'Rosemary', type: 'Herb', property: 'Memory', tags: ['focus', 'protection'], color: 'text-blue-400', icon: <Flame size={18} /> },
@@ -70,7 +71,7 @@ const MASTER_DATA = [
   { id: 'h24', name: 'Comfrey', type: 'Herb', property: 'Safety', tags: ['travel', 'healing'], color: 'text-green-200', icon: <Mountain size={18} /> },
   { id: 'h25', name: 'Witch Hazel', type: 'Herb', property: 'Mend', tags: ['healing', 'broken heart'], color: 'text-yellow-200', icon: <Zap size={18} /> },
 
-  // PANTRY
+  // PANTRY (25)
   { id: 'k1', name: 'Sea Salt', type: 'Pantry', property: 'Shield', tags: ['protection', 'cleansing'], color: 'text-slate-100', icon: <Circle size={18} /> },
   { id: 'k2', name: 'Honey', type: 'Pantry', property: 'Sweetness', tags: ['love', 'friendship'], color: 'text-yellow-600', icon: <Droplets size={18} /> },
   { id: 'k3', name: 'Coffee', type: 'Pantry', property: 'Haste', tags: ['energy', 'focus'], color: 'text-amber-900', icon: <Coffee size={18} /> },
@@ -97,7 +98,7 @@ const MASTER_DATA = [
   { id: 'k24', name: 'Cinnamon Stick', type: 'Pantry', property: 'Fast Luck', tags: ['money', 'speed'], color: 'text-orange-900', icon: <Zap size={18} /> },
   { id: 'k25', name: 'Flour', type: 'Pantry', property: 'Home', tags: ['stability', 'foundation'], color: 'text-slate-100', icon: <Mountain size={18} /> },
 
-  // COLOURS
+  // COLOURS (10)
   { id: 'ca1', name: 'White', type: 'Colour', property: 'Purity', tags: ['universal', 'cleansing'], color: 'text-white', icon: <Flame size={18} /> },
   { id: 'ca2', name: 'Black', type: 'Colour', property: 'Banishing', tags: ['protection', 'binding'], color: 'text-slate-900', icon: <Flame size={18} /> },
   { id: 'ca3', name: 'Red', type: 'Colour', property: 'Passion', tags: ['strength', 'vitality'], color: 'text-red-500', icon: <Flame size={18} /> },
@@ -122,31 +123,25 @@ export default function Garden() {
   const [selectedMateria, setSelectedMateria] = useState([]);
   const [rituals, setRituals] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
-  // --- IDENTITY & DATA SYNC ---
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      handleUserIdentity(session?.user);
+      handleUser(session?.user);
     };
     init();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleUserIdentity(session?.user);
+      handleUser(session?.user);
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleUserIdentity = (sessionUser) => {
-    setUser(sessionUser ?? null);
-    // CHANGE THIS TO YOUR EMAIL to unlock Admin
-    if (sessionUser?.email === 'your_admin_email@test.com') {
-        setIsAdmin(true);
-    } else {
-        setIsAdmin(false);
-    }
-    if (sessionUser) fetchRituals(sessionUser.id);
+  const handleUser = (u) => {
+    setUser(u ?? null);
+    // Change this to your actual email to see the hidden Admin Tab
+    if (u?.email === 'your_admin_email@test.com') setIsAdmin(true);
+    if (u) fetchRituals(u.id);
   };
 
   const handleAuth = async (e) => {
@@ -167,7 +162,7 @@ export default function Garden() {
   const saveRitual = async () => {
     if (!user) return;
     const names = selectedMateria.map(m => m.name);
-    const intent = `Working of ${names.join(' and ')}`;
+    const intent = `Ritual of ${names.join(' & ')}`;
     const { error } = await supabase.from('rituals').insert([{ user_id: user.id, intent, tools: names }]);
     if (!error) {
       setSelectedMateria([]);
@@ -185,37 +180,35 @@ export default function Garden() {
   };
 
   const mantra = useMemo(() => {
-    if (selectedMateria.length === 0) return "Select your tools to begin...";
+    if (selectedMateria.length === 0) return "Choose your tools...";
     const props = selectedMateria.map(m => m.property.toLowerCase());
-    if (props.includes('wealth')) return "Abundance flows through me like the tide.";
-    if (props.includes('shield')) return "I am protected in a sphere of pure light.";
-    return "By my will and the old ways, this magic is bound.";
+    if (props.includes('wealth') || props.includes('money')) return "Abundance flows through me like the tide.";
+    if (props.includes('protection') || props.includes('shield')) return "I am guarded in light, safe and sound.";
+    return "By will and by power, the working is set.";
   }, [selectedMateria]);
 
-  // --- ENTRANCE VIEW ---
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#020806] flex items-center justify-center p-6 text-slate-300">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full bg-white/[0.02] border border-white/10 p-12 rounded-[4rem] text-center shadow-2xl backdrop-blur-md">
+      <div className="min-h-screen bg-[#020806] flex items-center justify-center p-6 text-slate-300 font-sans">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md w-full bg-white/[0.02] border border-white/10 p-12 rounded-[4rem] text-center backdrop-blur-3xl shadow-2xl">
           <Moon size={40} className="mx-auto text-emerald-400 mb-6" />
           <h2 className="text-3xl font-serif text-white mb-2 italic">Selene Collective</h2>
-          <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-10 font-black">Digital Coven Access</p>
+          <p className="text-[9px] uppercase tracking-[0.4em] text-slate-600 mb-10 font-black">Digital Grimoire Access</p>
           <form onSubmit={handleAuth} className="space-y-4">
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
-            <input type="password" placeholder="Key" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
-            <button type="submit" className="w-full py-4 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-400 transition-all text-xs">
-              {loading ? "..." : authMode === 'login' ? 'Enter' : 'Join'}
+            <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
+            <input type="password" placeholder="Passkey" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500/40 text-sm" />
+            <button type="submit" className="w-full py-4 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-400 transition-all">
+              {loading ? "..." : authMode === 'login' ? 'Login' : 'Register'}
             </button>
           </form>
-          <button onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')} className="mt-8 text-[9px] uppercase tracking-widest text-slate-600 hover:text-white transition-colors font-black">
-            {authMode === 'login' ? 'Register Spirit' : 'Member Login'}
+          <button onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')} className="mt-8 text-[9px] uppercase tracking-widest text-slate-600 hover:text-white font-black">
+            {authMode === 'login' ? 'Create Account' : 'Existing Member'}
           </button>
         </motion.div>
       </div>
     );
   }
 
-  // --- ACTIVE APP VIEW ---
   return (
     <div className="min-h-screen bg-[#020806] text-slate-300 font-sans pb-32">
       <nav className="max-w-7xl mx-auto p-10 flex flex-col md:flex-row justify-between items-center gap-10">
@@ -223,12 +216,9 @@ export default function Garden() {
           <Moon className="text-emerald-400" size={24} />
           <h1 className="text-2xl font-serif italic text-white">Selene</h1>
         </div>
-        
-        <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-3xl shadow-xl">
+        <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-md">
           {['moon', 'library', 'altar', 'journal'].map(t => (
-            <button key={t} onClick={() => setActiveTab(t)} className={`px-6 py-3 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all ${activeTab === t ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-600 hover:text-slate-400'}`}>
-              {t}
-            </button>
+            <button key={t} onClick={() => setActiveTab(t)} className={`px-6 py-2 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all ${activeTab === t ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-600 hover:text-slate-400'}`}>{t}</button>
           ))}
           {isAdmin && (
             <button onClick={() => setActiveTab('admin')} className={`px-4 transition-colors ${activeTab === 'admin' ? 'text-amber-400' : 'text-amber-900 hover:text-amber-500'}`}>
@@ -236,44 +226,38 @@ export default function Garden() {
             </button>
           )}
         </div>
-
         <button onClick={() => supabase.auth.signOut()} className="text-slate-800 hover:text-red-400 transition-colors"><LogOut size={18}/></button>
       </nav>
 
       <main className="max-w-7xl mx-auto px-8">
         <AnimatePresence mode="wait">
-          
           {activeTab === 'moon' && (
-            <motion.div key="moon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center">
-              <Moon size={120} className="mx-auto text-emerald-400 mb-10 drop-shadow-[0_0_30px_rgba(52,211,153,0.2)]" />
-              <h2 className="text-7xl font-serif italic text-white mb-6">Waning</h2>
-              <div className="flex justify-center gap-10 text-[10px] uppercase tracking-[0.5em] text-emerald-500 font-black">
-                <span>Phase: Release</span>
-                <span className="text-slate-800">|</span>
-                <span>Element: Water</span>
-              </div>
+            <motion.div key="moon" className="py-24 text-center">
+              <Moon size={100} className="mx-auto text-emerald-400 mb-10 drop-shadow-[0_0_20px_rgba(52,211,153,0.3)]" />
+              <h2 className="text-7xl font-serif italic text-white mb-6">Waning Gibbous</h2>
+              <p className="text-emerald-500 tracking-[0.5em] text-[10px] uppercase font-black">A Time for Release</p>
             </motion.div>
           )}
 
           {activeTab === 'library' && (
-            <motion.div key="lib" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.div key="lib">
               <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-16 border-b border-white/5 pb-10">
-                <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
+                <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 overflow-x-auto max-w-full">
                   {['Crystal', 'Herb', 'Pantry', 'Colour'].map(type => (
-                    <button key={type} onClick={() => setSubFilter(type)} className={`px-6 py-2 rounded-xl text-[10px] uppercase font-black tracking-widest ${subFilter === type ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-600 hover:text-slate-500'}`}>{type}</button>
+                    <button key={type} onClick={() => setSubFilter(type)} className={`px-6 py-2 rounded-xl text-[10px] uppercase font-black tracking-widest whitespace-nowrap ${subFilter === type ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-600 hover:text-slate-500'}`}>{type}</button>
                   ))}
                 </div>
-                <div className="relative w-full lg:w-96">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-800" size={16} />
-                  <input type="text" placeholder="Search intent (e.g. wealth)..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-14 pr-8 text-xs outline-none focus:ring-1 focus:ring-emerald-500/20" />
+                <div className="relative w-full lg:w-80">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={16} />
+                  <input type="text" placeholder="Search intent..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-12 pr-6 text-xs outline-none focus:ring-1 focus:ring-emerald-500/30" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
                 {MASTER_DATA.filter(i => i.type === subFilter && (searchQuery === "" || i.tags.some(t => t.includes(searchQuery.toLowerCase())))).map(item => (
-                  <div key={item.id} onClick={() => toggleMateria(item)} className={`p-10 rounded-[3rem] border transition-all cursor-pointer relative overflow-hidden group ${selectedMateria.find(s => s.id === item.id) ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/[0.02] border-white/5 hover:border-white/20'}`}>
-                    <div className={`${item.color} mb-6 transition-transform group-hover:scale-110 duration-500`}>{item.icon}</div>
-                    <p className="text-white font-serif italic text-xl">{item.name}</p>
+                  <div key={item.id} onClick={() => toggleMateria(item)} className={`p-10 rounded-[3rem] border transition-all cursor-pointer group ${selectedMateria.find(s => s.id === item.id) ? 'bg-emerald-500/10 border-emerald-500' : 'bg-white/[0.02] border-white/5 hover:border-white/20'}`}>
+                    <div className={`${item.color} mb-6 group-hover:scale-110 transition-transform`}>{item.icon}</div>
+                    <p className="text-white font-serif italic text-lg">{item.name}</p>
                     <p className="text-[10px] uppercase tracking-widest text-slate-700 mt-2 font-black">{item.property}</p>
                   </div>
                 ))}
@@ -281,15 +265,15 @@ export default function Garden() {
               
               {selectedMateria.length > 0 && (
                 <div className="fixed bottom-12 left-1/2 -translate-x-1/2 bg-black border border-emerald-500/20 px-12 py-6 rounded-full flex items-center gap-12 shadow-3xl backdrop-blur-3xl z-[300]">
-                   <p className="text-[10px] uppercase tracking-widest text-slate-600 font-black italic">{selectedMateria.length} / 4 Materia Prepared</p>
-                   <button onClick={() => setActiveTab('altar')} className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 hover:text-white transition-colors">Invoke Altar</button>
+                   <p className="text-[10px] uppercase tracking-widest text-slate-600 font-black italic">{selectedMateria.length} / 4 Selected</p>
+                   <button onClick={() => setActiveTab('altar')} className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 hover:text-white transition-colors">Go to Altar</button>
                 </div>
               )}
             </motion.div>
           )}
 
           {activeTab === 'altar' && (
-            <motion.div key="altar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto py-10">
+            <motion.div key="altar" className="max-w-4xl mx-auto py-10">
               <div className="bg-[#050c09] border border-emerald-500/20 p-24 rounded-[6rem] shadow-3xl text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
                 <h3 className="text-[10px] uppercase tracking-[0.8em] text-emerald-500/40 font-black mb-16">The Mouth of Power</h3>
@@ -299,25 +283,25 @@ export default function Garden() {
                     <div key={m.id} className={`${m.color} p-5 bg-white/5 rounded-3xl border border-white/5`}>{m.icon}</div>
                   ))}
                 </div>
-                <button onClick={saveRitual} className="w-full py-10 bg-emerald-500/5 border border-emerald-500/20 rounded-[3rem] text-emerald-400 font-black text-[14px] uppercase tracking-[0.7em] hover:bg-emerald-500/10 transition-all">Seal Into Eternal Log</button>
+                <button onClick={saveRitual} className="w-full py-10 bg-emerald-500/5 border border-emerald-500/20 rounded-[3rem] text-emerald-400 font-black text-[14px] uppercase tracking-[0.6em] hover:bg-emerald-500/10 transition-all">Seal Into Grimoire</button>
               </div>
             </motion.div>
           )}
 
           {activeTab === 'journal' && (
-            <motion.div key="journal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 py-10 max-w-4xl mx-auto">
-              <h2 className="text-3xl font-serif italic text-white mb-14 flex items-center gap-4"><Book size={20} className="text-emerald-500"/> The Book of Shadows</h2>
+            <motion.div key="journal" className="max-w-4xl mx-auto space-y-6 py-10">
+              <h2 className="text-3xl font-serif italic text-white mb-10 flex items-center gap-4"><Book size={20} className="text-emerald-500"/> Book of Shadows</h2>
               {rituals.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-white/5 rounded-[4rem]">
-                    <p className="text-slate-600 uppercase tracking-widest text-xs font-black">Your pages are empty...</p>
+                    <p className="text-slate-600 uppercase tracking-widest text-xs font-black italic">The pages remain blank...</p>
                 </div>
               ) : rituals.map((r, i) => (
                 <div key={i} className="p-12 bg-white/[0.01] border border-white/5 rounded-[4rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 group hover:bg-white/[0.02] transition-all">
                   <div className="space-y-4">
                     <p className="text-2xl italic text-slate-300 font-serif leading-relaxed">"{r.intent}"</p>
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-3">
                         {r.tools.map((t, idx) => (
-                            <span key={idx} className="text-[9px] uppercase tracking-widest text-emerald-900 bg-emerald-500/5 px-3 py-1 rounded-full font-black">{t}</span>
+                            <span key={idx} className="text-[9px] uppercase tracking-widest text-emerald-900 bg-emerald-500/5 px-3 py-1 rounded-full font-black border border-emerald-500/10">{t}</span>
                         ))}
                     </div>
                   </div>
@@ -328,31 +312,20 @@ export default function Garden() {
           )}
 
           {activeTab === 'admin' && isAdmin && (
-            <motion.div key="admin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-20 space-y-12">
-              <div className="flex justify-between items-end">
-                <div>
-                    <h2 className="text-5xl font-serif text-amber-500 italic mb-2">Coven Analytics</h2>
-                    <p className="text-xs uppercase tracking-[0.4em] text-slate-700 font-black">Owner View: Restricted</p>
+            <motion.div key="admin" className="py-20 text-center space-y-12">
+                <h2 className="text-5xl font-serif text-amber-500 italic">Coven Portal</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
+                    <div className="bg-white/5 p-16 rounded-[4rem] border border-white/5">
+                        <p className="text-[10px] uppercase text-slate-500 font-black tracking-widest">Global Workings</p>
+                        <p className="text-7xl text-white font-serif mt-4">{rituals.length}</p>
+                    </div>
+                    <div className="bg-amber-500/5 p-16 rounded-[4rem] border border-amber-500/10">
+                        <p className="text-[10px] uppercase text-amber-900 font-black tracking-widest">Active Coven Status</p>
+                        <p className="text-7xl text-amber-500 font-serif mt-4">Safe</p>
+                    </div>
                 </div>
-                <ShoppingBag className="text-amber-900" size={32} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <div className="p-16 bg-amber-500/5 border border-amber-500/20 rounded-[5rem]">
-                   <p className="text-[11px] uppercase tracking-widest text-amber-900 font-black mb-4">Total Users</p>
-                   <p className="text-6xl text-white font-serif">1</p>
-                </div>
-                <div className="p-16 bg-emerald-500/5 border border-emerald-500/20 rounded-[5rem]">
-                   <p className="text-[11px] uppercase tracking-widest text-emerald-900 font-black mb-4">Market Potential</p>
-                   <p className="text-6xl text-white font-serif">$0.00</p>
-                </div>
-                <div className="p-16 bg-white/[0.02] border border-white/5 rounded-[5rem]">
-                   <p className="text-[11px] uppercase tracking-widest text-slate-800 font-black mb-4">Health</p>
-                   <p className="text-6xl text-emerald-500 font-serif">A+</p>
-                </div>
-              </div>
             </motion.div>
           )}
-
         </AnimatePresence>
       </main>
     </div>
