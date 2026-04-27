@@ -114,27 +114,34 @@ export default function Garden() {
   const [tarot, setTarot] = useState(null);
   const [ritualOutput, setRitualOutput] = useState(null);
 
-  // LOGIC: Generate Mantra
-  const mantra = useMemo(() => {
-    if (selectedItems.length === 0) return "Select your tools...";
-    const names = selectedItems.map(i => i.name).join(" & ");
-    const props = selectedItems.map(i => i.property.toLowerCase());
+  // LOGIC: POETIC WEAVER (Professional Incantation Builder)
+  const incantation = useMemo(() => {
+    if (selectedItems.length === 0) return "Assemble your materia...";
     
-    if (props.includes('wealth') || props.includes('money')) return `By ${names}, abundance flows to me.`;
-    if (props.includes('peace') || props.includes('calm') || props.includes('anxiety')) return `By ${names}, my mind finds stillness.`;
-    if (props.includes('shield') || props.includes('protection')) return `By ${names}, I am guarded and safe.`;
-    if (props.includes('love') || props.includes('passion')) return `By ${names}, my heart is open and full.`;
+    const materia = selectedItems.map(i => i.name);
+    const intent = selectedItems[0]?.property.toLowerCase(); // Lead with the first selected property
     
-    return `By ${names}, my intent is set and sealed.`;
+    // Ritual templates for a more "haute" feel
+    const templates = [
+      `I weave the essence of ${materia.join(", ")} to manifest ${intent}.`,
+      `By the power of ${materia[0]} and the spirit of ${materia[1] || 'the earth'}, I call forth ${intent}.`,
+      `${materia.join(" + ")}: A working for ${intent} and sacred alignment.`,
+      `Invoking the deep resonance of ${materia.join(" and ")} to seal this intent.`
+    ];
+
+    // Pick a template based on number of items for variety
+    if (selectedItems.length === 1) return `Focusing intent through ${materia[0]}...`;
+    if (selectedItems.length === 2) return `Binding ${materia[0]} with ${materia[1]} for ${intent}.`;
+    return templates[selectedItems.length - 1];
   }, [selectedItems]);
 
-  // LOGIC: Generate Ritual Instructions
   const startRitual = () => {
     const steps = [
-      "Find a quiet space and ground your energy.",
-      ...selectedItems.map(item => `Hold your ${item.name} and focus on its property of ${item.property}.`),
-      "Speak the mantra aloud three times.",
-      "Release your intent into the universe."
+      "Center your breath and clear your ritual space.",
+      ...selectedItems.map(item => `Acknowledge the ${item.property} within your ${item.name}.`),
+      `Speak the Weaver's bond: "${incantation}"`,
+      "Visualize your intention as a completed reality.",
+      "The working is sealed. So mote it be."
     ];
     setRitualOutput(steps);
   };
@@ -158,44 +165,45 @@ export default function Garden() {
   return (
     <div style={{ backgroundColor: '#020806', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
-        <h1 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', marginBottom: '10px' }}>Selene Garden</h1>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+        <h1 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', marginBottom: '10px', letterSpacing: '-1px' }}>Selene Garden</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '25px' }}>
           {['moon', 'library', 'tarot'].map(tab => (
-             <button key={tab} onClick={() => { setActiveTab(tab); setRitualOutput(null); }} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#34d399' : '#475569', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '2px', cursor: 'pointer', fontWeight: 'bold' }}>{tab}</button>
+             <button key={tab} onClick={() => { setActiveTab(tab); setRitualOutput(null); }} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '3px', cursor: 'pointer', fontWeight: '900', transition: '0.3s' }}>{tab}</button>
           ))}
         </div>
       </header>
 
       {activeTab === 'moon' && (
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <div style={{ fontSize: '80px', marginBottom: '20px' }}>🌖</div>
-          <h2 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic' }}>Waning Gibbous</h2>
-          <p style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', marginTop: '10px' }}>Current Phase: Release & Reflection</p>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <div style={{ fontSize: '100px', marginBottom: '30px', filter: 'drop-shadow(0 0 20px rgba(16,185,129,0.2))' }}>🌖</div>
+          <h2 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', fontWeight: '200' }}>Waning Gibbous</h2>
+          <div style={{ height: '1px', width: '60px', background: '#065f46', margin: '20px auto' }}></div>
+          <p style={{ color: '#065f46', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '5px' }}>The Season of Release</p>
         </div>
       )}
 
       {activeTab === 'library' && (
         <>
-          <div style={{ maxWidth: '600px', margin: '0 auto 30px auto' }}>
+          <div style={{ maxWidth: '500px', margin: '0 auto 40px auto' }}>
             <input 
               type="text" 
-              placeholder="Filter by intent... (Anxiety, Money, Love...)" 
+              placeholder="Search intent or materia..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '100%', background: '#050c09', border: '1px solid #1e293b', padding: '15px 25px', borderRadius: '50px', color: 'white', outline: 'none', fontSize: '12px', textAlign: 'center' }}
+              style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #1e293b', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '15px', color: 'white', outline: 'none', fontSize: '14px', textAlign: 'center', fontStyle: 'italic' }}
             />
           </div>
-          <nav style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
+          <nav style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '40px' }}>
             {['Crystal', 'Herb', 'Pantry', 'Colour'].map(type => (
-              <button key={type} onClick={() => setSubFilter(type)} style={{ background: subFilter === type ? '#064e3b' : 'transparent', color: subFilter === type ? '#34d399' : '#475569', border: '1px solid #1e293b', padding: '8px 20px', borderRadius: '15px', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase' }}>{type}</button>
+              <button key={type} onClick={() => setSubFilter(type)} style={{ background: 'none', color: subFilter === type ? '#34d399' : '#475569', border: 'none', padding: '5px 10px', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px' }}>{type}</button>
             ))}
           </nav>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '20px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '120px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '20px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '150px' }}>
             {filteredData.map(item => (
-              <div key={item.id} onClick={() => toggleItem(item)} style={{ background: selectedItems.find(s => s.id === item.id) ? '#064e3b22' : '#050c09', border: selectedItems.find(s => s.id === item.id) ? '1px solid #10b981' : '1px solid #1e293b', padding: '25px', borderRadius: '30px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s' }}>
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>{item.icon}</div>
-                <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
-                <div style={{ fontSize: '9px', color: '#065f46', marginTop: '5px', textTransform: 'uppercase', fontWeight: 'bold' }}>{item.property}</div>
+              <div key={item.id} onClick={() => toggleItem(item)} style={{ background: selectedItems.find(s => s.id === item.id) ? '#064e3b11' : '#040a08', border: selectedItems.find(s => s.id === item.id) ? '1px solid #10b981' : '1px solid #111', padding: '30px 20px', borderRadius: '40px', textAlign: 'center', cursor: 'pointer', transition: '0.4s' }}>
+                <div style={{ fontSize: '28px', marginBottom: '15px', opacity: selectedItems.find(s => s.id === item.id) ? 1 : 0.6 }}>{item.icon}</div>
+                <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic', marginBottom: '4px' }}>{item.name}</div>
+                <div style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.property}</div>
               </div>
             ))}
           </div>
@@ -203,15 +211,17 @@ export default function Garden() {
       )}
 
       {activeTab === 'tarot' && (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
           {!tarot ? (
-            <button onClick={() => setTarot(TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)])} style={{ background: '#064e3b', color: '#34d399', border: 'none', padding: '20px 40px', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px' }}>Draw From Ether</button>
+            <div onClick={() => setTarot(TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)])} style={{ width: '200px', height: '300px', border: '2px solid #065f46', borderRadius: '15px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #020806, #020806 10px, #050c09 10px, #050c09 20px)' }}>
+              <span style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px' }}>Draw Card</span>
+            </div>
           ) : (
-            <div style={{ background: '#050c09', padding: '40px', borderRadius: '40px', border: '1px solid #1e293b', maxWidth: '300px', margin: '0 auto' }}>
-              <div style={{ fontSize: '50px', marginBottom: '20px' }}>{tarot.icon}</div>
-              <h3 style={{ color: 'white', fontSize: '1.5rem', fontStyle: 'italic' }}>{tarot.name}</h3>
-              <p style={{ color: '#065f46', fontSize: '12px', marginTop: '10px', lineHeight: '1.6' }}>{tarot.meaning}</p>
-              <button onClick={() => setTarot(null)} style={{ marginTop: '20px', background: 'none', border: 'none', color: '#444', fontSize: '9px', textTransform: 'uppercase', cursor: 'pointer' }}>Reset Deck</button>
+            <div style={{ background: '#050c09', padding: '50px 30px', borderRadius: '20px', border: '1px solid #1e293b', maxWidth: '350px', margin: '0 auto' }}>
+              <div style={{ fontSize: '60px', marginBottom: '25px' }}>{tarot.icon}</div>
+              <h3 style={{ color: 'white', fontSize: '1.8rem', fontStyle: 'italic', marginBottom: '15px' }}>{tarot.name}</h3>
+              <p style={{ color: '#065f46', fontSize: '14px', lineHeight: '1.8', fontStyle: 'italic' }}>{tarot.meaning}</p>
+              <button onClick={() => setTarot(null)} style={{ marginTop: '30px', background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '2px' }}>Return to Deck</button>
             </div>
           )}
         </div>
@@ -219,23 +229,23 @@ export default function Garden() {
 
       {/* RITUAL OVERLAY */}
       {ritualOutput && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(2,8,6,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ maxWidth: '500px', width: '100%', background: '#050c09', border: '1px solid #065f46', padding: '40px', borderRadius: '40px', textAlign: 'center' }}>
-             <h2 style={{ color: 'white', fontStyle: 'italic', marginBottom: '20px' }}>The Working Ceremony</h2>
-             <div style={{ textAlign: 'left', marginBottom: '30px' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(2,8,6,0.98)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ maxWidth: '450px', width: '100%', padding: '40px', textAlign: 'center' }}>
+             <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '2rem', marginBottom: '30px' }}>The Ceremony</h2>
+             <div style={{ textAlign: 'left', marginBottom: '40px', borderLeft: '1px solid #065f46', paddingLeft: '25px' }}>
                 {ritualOutput.map((step, i) => (
-                  <p key={i} style={{ fontSize: '13px', marginBottom: '10px', color: '#cbd5e1' }}><span style={{ color: '#10b981', marginRight: '10px' }}>{i + 1}.</span> {step}</p>
+                  <p key={i} style={{ fontSize: '14px', marginBottom: '15px', color: '#cbd5e1', lineHeight: '1.6' }}><span style={{ color: '#10b981', fontWeight: 'bold' }}>{i + 1}.</span> {step}</p>
                 ))}
              </div>
-             <button onClick={() => { setRitualOutput(null); setSelectedItems([]); }} style={{ background: '#10b981', color: 'black', border: 'none', padding: '15px 30px', borderRadius: '50px', fontWeight: 'black', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer' }}>Seal & Finish</button>
+             <button onClick={() => { setRitualOutput(null); setSelectedItems([]); }} style={{ background: 'white', color: 'black', border: 'none', padding: '18px 40px', borderRadius: '2px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px' }}>Complete Working</button>
           </div>
         </div>
       )}
 
       {selectedItems.length > 0 && !ritualOutput && (
-        <div style={{ position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'black', border: '1px solid #065f46', padding: '15px 40px', borderRadius: '50px', textAlign: 'center', boxShadow: '0 0 30px rgba(16,185,129,0.2)', zIndex: 100 }}>
-          <p style={{ color: '#34d399', fontSize: '12px', fontStyle: 'italic', marginBottom: '5px' }}>"{mantra}"</p>
-          <button onClick={startRitual} style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 'black', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '2px', cursor: 'pointer' }}>Seal Into Grimoire</button>
+        <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '500px', backgroundColor: 'black', border: '1px solid #111', padding: '25px', borderRadius: '20px', textAlign: 'center', zIndex: 100 }}>
+          <p style={{ color: 'white', fontSize: '14px', fontStyle: 'italic', marginBottom: '15px', letterSpacing: '0.5px' }}>"{incantation}"</p>
+          <button onClick={startRitual} style={{ background: '#10b981', color: 'black', border: 'none', padding: '10px 25px', borderRadius: '50px', fontWeight: 'black', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', cursor: 'pointer' }}>Begin Ritual</button>
         </div>
       )}
     </div>
