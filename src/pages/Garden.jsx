@@ -292,7 +292,7 @@ export default function Garden() {
       {activeTab === 'moon' && (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ fontSize: '120px', marginBottom: '25px', filter: 'hue-rotate(280deg)' }}>🌖</div>
+            <div style={{ fontSize: '120px', marginBottom: '25px', filter: 'hue-rotate(260deg) saturate(0.4) brightness(0.85) drop-shadow(0 0 24px #7c3aed66)' }}>🌖</div>
             <h2 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '100' }}>Waning Gibbous</h2>
             <p style={{ color: '#e9d5ff', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px', textShadow: '0 0 10px #bf80ff80' }}>Illumination 64%</p>
           </div>
