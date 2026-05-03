@@ -96,13 +96,56 @@ const MASTER_DATA = [
   { id: 'ca6', name: 'Yellow', type: 'Colour', property: 'Intelligence', icon: '💛', tags: ['clarity', 'confidence', 'intelligence'] }
 ];
 
-// --- TAROT DATABASE WITH FATE LINES ---
+// --- TAROT DATABASE WITH TEMPORAL MEANINGS ---
 const TAROT_CARDS = [
-  { name: 'The Magician', meaning: 'The bridge between intent and reality.', icon: '🪄', fateLine: "The Magician grants mastery over these elements." },
-  { name: 'The High Priestess', meaning: 'Sacred silence and deep knowing.', icon: '🌙', fateLine: "The High Priestess veils this intent in sacred silence." },
-  { name: 'The Empress', meaning: 'Creative abundance and growth.', icon: '🌿', fateLine: "The Empress breathes life into this nascent growth." },
-  { name: 'The Star', meaning: 'Spiritual clarity after the storm.', icon: '✨', fateLine: "The Star illuminates the path for this working." },
-  { name: 'The Moon', meaning: 'Wild intuition and the face of the subconscious.', icon: '🌑', fateLine: "The Moon reveals the hidden truth of this desire." }
+  {
+    name: 'The Magician', icon: '🪄',
+    past: { meaning: 'A time of raw potential was seized and transformed into will.', fateLine: 'The Magician reminds you: you have already wielded great power.' },
+    present: { meaning: 'The bridge between intent and reality stands open before you.', fateLine: 'The Magician grants mastery over these elements, here and now.' },
+    future: { meaning: 'A convergence of skill and desire will bring manifestation.', fateLine: 'The Magician promises that mastery of your craft lies ahead.' }
+  },
+  {
+    name: 'The High Priestess', icon: '🌙',
+    past: { meaning: 'A secret was kept, a knowing held deep beneath the surface.', fateLine: 'The High Priestess guarded this truth in an earlier time.' },
+    present: { meaning: 'Sacred silence and deep inner knowing surround this moment.', fateLine: 'The High Priestess veils this intent in sacred silence.' },
+    future: { meaning: 'What is hidden will be revealed only to those who wait with patience.', fateLine: 'The High Priestess will unveil the mystery in its own season.' }
+  },
+  {
+    name: 'The Empress', icon: '🌿',
+    past: { meaning: 'Nourishment and creative abundance shaped the seeds of who you are.', fateLine: 'The Empress tended the roots of this desire long ago.' },
+    present: { meaning: 'Creative abundance and fertile growth surround this working.', fateLine: 'The Empress breathes life into this nascent growth.' },
+    future: { meaning: 'A season of flourishing and embodied richness is drawing near.', fateLine: 'The Empress promises a harvest of all you have cultivated.' }
+  },
+  {
+    name: 'The Star', icon: '✨',
+    past: { meaning: 'After a great unravelling, hope was quietly rekindled within you.', fateLine: 'The Star was the light that led you out of an old darkness.' },
+    present: { meaning: 'Spiritual clarity and renewed faith illuminate this working.', fateLine: 'The Star illuminates the path for this working.' },
+    future: { meaning: 'Clarity and calm restoration await beyond the current storm.', fateLine: 'The Star will guide this intent to its most luminous outcome.' }
+  },
+  {
+    name: 'The Moon', icon: '🌑',
+    past: { meaning: 'Illusion and deep subconscious currents shaped the path you walked.', fateLine: 'The Moon was behind the veil of confusion you have since passed through.' },
+    present: { meaning: 'Wild intuition and the face of the subconscious are active now.', fateLine: 'The Moon reveals the hidden truth of this desire.' },
+    future: { meaning: 'The unconscious will surface; trust feeling over fact.', fateLine: 'The Moon will draw the unseen into the light of the next cycle.' }
+  },
+  {
+    name: 'The Hermit', icon: '🕯️',
+    past: { meaning: 'A period of solitude and inward searching forged your wisdom.', fateLine: 'The Hermit walked with you through the long silence of becoming.' },
+    present: { meaning: 'Inner guidance and stillness are the most powerful tools available.', fateLine: 'The Hermit lights the way from within this very moment.' },
+    future: { meaning: 'A season of retreat and deep listening will bring great clarity.', fateLine: 'The Hermit will guide you inward before the next threshold opens.' }
+  },
+  {
+    name: 'Wheel of Fortune', icon: '🎡',
+    past: { meaning: 'A great turning brought you to where you stand today.', fateLine: 'The Wheel has already spun this fate into motion.' },
+    present: { meaning: 'Change is in motion; cycles are turning in your favour.', fateLine: 'The Wheel of Fortune turns this working toward its destined outcome.' },
+    future: { meaning: 'A pivotal shift in circumstance is approaching on the horizon.', fateLine: 'The Wheel promises a significant turn of events.' }
+  },
+  {
+    name: 'The World', icon: '🌍',
+    past: { meaning: 'A great cycle reached its completion, leaving you whole.', fateLine: 'The World marked the end of a journey you have already walked.' },
+    present: { meaning: 'Integration, wholeness, and completion are available right now.', fateLine: 'The World declares this working already whole and complete.' },
+    future: { meaning: 'Full achievement and the joy of completion await at this path\'s end.', fateLine: 'The World promises fulfilment beyond what you dare to imagine.' }
+  }
 ];
 
 export default function Garden() {
@@ -137,7 +180,7 @@ export default function Garden() {
     } catch(e) {}
   };
 
-  // --- NARRATIVE WEAVER (Now fully Tarot Integrated) ---
+  // --- NARRATIVE WEAVER ---
   const weaveMantra = useMemo(() => {
     if (selectedItems.length === 0) return "Assemble the materia...";
     
@@ -155,10 +198,13 @@ export default function Garden() {
     
     story += `this working for ${intent} is now bound. `;
 
-    if (tarot) {
-      story += tarot.reversed 
-        ? `Beware: ${tarot.name} reversed warns of clouded vision.` 
-        : tarot.fateLine;
+    if (tarot && tarot.length === 3) {
+      tarot.forEach(card => {
+        const temporal = card[card.position];
+        story += card.reversed
+          ? `In the ${card.position}, ${card.name} reversed warns: shadow and obstruction linger. `
+          : `In the ${card.position}, ${temporal.fateLine} `;
+      });
     }
 
     return story;
@@ -180,9 +226,13 @@ export default function Garden() {
 
   const drawTarot = () => {
     playChime('soft');
-    const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
-    const isReversed = Math.random() > 0.8;
-    setTarot({ ...card, reversed: isReversed });
+    const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
+    const three = shuffled.slice(0, 3).map((card, i) => ({
+      ...card,
+      position: ['past', 'present', 'future'][i],
+      reversed: Math.random() > 0.8,
+    }));
+    setTarot(three);
   };
 
   const drawWithVibe = () => {
@@ -286,17 +336,32 @@ export default function Garden() {
       )}
 
       {activeTab === 'tarot' && (
-        <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
           {!tarot ? (
             <div onClick={drawWithVibe} style={{ width: '220px', height: '320px', border: '1px solid #065f46', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #020806, #020806 8px, #030a08 8px, #030a08 16px)', transform: isShaking ? 'translateX(2px)' : 'none', transition: 'transform 0.05s' }}>
                <div style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
             </div>
           ) : (
-            <div style={{ maxWidth: '350px', margin: '0 auto' }}>
-              <div style={{ fontSize: '100px', marginBottom: '30px', transform: tarot.reversed ? 'rotate(180deg)' : 'none', transition: '1.2s' }}>{tarot.icon}</div>
-              <h3 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic' }}>{tarot.name} {tarot.reversed && <span style={{ color: '#065f46', fontSize: '14px' }}>(Shadow)</span>}</h3>
-              <p style={{ color: '#065f46', fontSize: '14px', lineHeight: '2', fontStyle: 'italic', marginTop: '20px' }}>{tarot.meaning}</p>
-              <button onClick={() => setTarot(null)} style={{ marginTop: '50px', background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
+                {tarot.map(card => {
+                  const temporal = card[card.position];
+                  return (
+                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #065f46', borderRadius: '4px', padding: '35px 20px', background: '#040a08', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                      <p style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '5px', margin: 0 }}>{card.position}</p>
+                      <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s' }}>{card.icon}</div>
+                      <h3 style={{ color: 'white', fontSize: '1.1rem', fontStyle: 'italic', margin: 0 }}>
+                        {card.name}
+                        {card.reversed && <span style={{ color: '#065f46', fontSize: '11px', display: 'block', marginTop: '4px' }}>Shadow</span>}
+                      </h3>
+                      <p style={{ color: '#065f46', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0 }}>
+                        {card.reversed ? 'Obstruction and shadow veil this time.' : temporal.meaning}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              <button onClick={() => setTarot(null)} style={{ background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
             </div>
           )}
         </div>
@@ -364,7 +429,7 @@ export default function Garden() {
           <button onClick={() => setRitualOutput([
             "Observe the weight of your chosen materia.",
             `Quiet your pulse and align with ${selectedItems[0].name}.`,
-            tarot ? `Acknowledge the influence of ${tarot.name} upon this fate.` : "Hold the vision with absolute clarity.",
+            tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
             `Speak the weave: "${weaveMantra}"`,
             "The intent is sealed. Step away from the ritual space."
           ])} style={{ background: '#10b981', color: 'black', border: 'none', padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px' }}>Begin Ceremony</button>
