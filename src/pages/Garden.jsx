@@ -279,12 +279,12 @@ export default function Garden() {
   });
 
   return (
-    <div style={{ backgroundColor: '#0a0a2e', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
+    <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Atsanik Selene</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
-             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#d8b4fe' : '#334155', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #a855f740' : 'none', borderRadius: '2px', padding: '2px 4px', transition: 'all 0.3s' }}>{tab}</button>
+             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#d8b4fe' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '2px 4px', transition: 'all 0.3s' }}>{tab}</button>
           ))}
         </div>
       </header>
@@ -292,13 +292,13 @@ export default function Garden() {
       {activeTab === 'moon' && (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ fontSize: '120px', marginBottom: '25px' }}>🌖</div>
+            <div style={{ fontSize: '120px', marginBottom: '25px', filter: 'hue-rotate(280deg)' }}>🌖</div>
             <h2 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '100' }}>Waning Gibbous</h2>
-            <p style={{ color: '#7c3aed', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px' }}>Illumination 64%</p>
+            <p style={{ color: '#e9d5ff', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px', textShadow: '0 0 10px #bf80ff80' }}>Illumination 64%</p>
           </div>
           <div>
-            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#4c1d95', letterSpacing: '4px', borderBottom: '1px solid #1e1b4b', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
-            <p style={{ fontSize: '12px', color: '#475569', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#e9d5ff', letterSpacing: '4px', borderBottom: '1px solid #2d0040', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
+            <p style={{ fontSize: '12px', color: '#a78bfa', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
               {archives.length === 0 ? 'History is waiting to be written.' : `${archives.length} ritual${archives.length > 1 ? 's' : ''} sealed.`}
             </p>
           </div>
