@@ -213,7 +213,7 @@ export default function Garden() {
     if (pantry.length > 0) story += `With the domestic focus of ${pantry.join(' and ')}, the intent is grounded. `;
     if (colors.length > 0) story += `Woven into the hue of ${colors[0]}, `;
     
-    story += `this working for ${intent} is now bound. `;
+    story += `this working for ${intent} is now bound. The Atsanik dance above as the work is witnessed. `;
 
     if (tarot && tarot.length === 3) {
       tarot.forEach(card => {
@@ -279,9 +279,9 @@ export default function Garden() {
   });
 
   return (
-    <div style={{ backgroundColor: '#020806', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
+    <div style={{ backgroundColor: '#020617', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
-        <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene's Garden</h1>
+        <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Atsanik Selene</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
@@ -297,7 +297,7 @@ export default function Garden() {
             <p style={{ color: '#065f46', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px' }}>Illumination 64%</p>
           </div>
           <div>
-            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#1e293b', letterSpacing: '4px', borderBottom: '1px solid #111', paddingBottom: '15px' }}>The Archives</h3>
+            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#1e293b', letterSpacing: '4px', borderBottom: '1px solid #111', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
             <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
               {archives.length === 0 ? 'History is waiting to be written.' : `${archives.length} ritual${archives.length > 1 ? 's' : ''} sealed.`}
             </p>
