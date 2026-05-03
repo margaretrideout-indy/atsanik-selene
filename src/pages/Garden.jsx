@@ -279,12 +279,12 @@ export default function Garden() {
   });
 
   return (
-    <div style={{ backgroundColor: '#020617', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
+    <div style={{ backgroundColor: '#0a0a2e', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Atsanik Selene</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
-             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
+             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#d8b4fe' : '#334155', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #a855f740' : 'none', borderRadius: '2px', padding: '2px 4px', transition: 'all 0.3s' }}>{tab}</button>
           ))}
         </div>
       </header>
@@ -294,11 +294,11 @@ export default function Garden() {
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{ fontSize: '120px', marginBottom: '25px' }}>🌖</div>
             <h2 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '100' }}>Waning Gibbous</h2>
-            <p style={{ color: '#065f46', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px' }}>Illumination 64%</p>
+            <p style={{ color: '#7c3aed', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px' }}>Illumination 64%</p>
           </div>
           <div>
-            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#1e293b', letterSpacing: '4px', borderBottom: '1px solid #111', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
-            <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#4c1d95', letterSpacing: '4px', borderBottom: '1px solid #1e1b4b', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
+            <p style={{ fontSize: '12px', color: '#475569', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
               {archives.length === 0 ? 'History is waiting to be written.' : `${archives.length} ritual${archives.length > 1 ? 's' : ''} sealed.`}
             </p>
           </div>
@@ -313,12 +313,14 @@ export default function Garden() {
               placeholder="Seek an intent..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #1e293b', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '20px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic' }}
+              style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #701a75', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '20px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', transition: 'border-color 0.3s, box-shadow 0.3s' }}
+            onFocus={e => { e.currentTarget.style.borderBottomColor = '#a855f7'; e.currentTarget.style.boxShadow = '0 4px 12px -4px #a855f780'; }}
+            onBlur={e => { e.currentTarget.style.borderBottomColor = '#701a75'; e.currentTarget.style.boxShadow = 'none'; }}
             />
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '25px', marginBottom: '50px' }}>
             {['Crystal', 'Herb', 'Pantry', 'Colour'].map(type => (
-              <button key={type} onClick={() => setSubFilter(type)} style={{ background: 'none', color: subFilter === type ? '#34d399' : '#1e293b', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px' }}>{type}</button>
+              <button key={type} onClick={() => setSubFilter(type)} style={{ background: 'none', color: subFilter === type ? '#d8b4fe' : '#334155', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px' }}>{type}</button>
             ))}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '200px' }}>
@@ -339,7 +341,7 @@ export default function Garden() {
               >
                 <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : 0.3 }}>{item.icon}</div>
                 <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
-                <div style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
+                <div style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
               </div>
             );})}
           </div>
@@ -349,8 +351,8 @@ export default function Garden() {
       {activeTab === 'tarot' && (
         <div style={{ textAlign: 'center', padding: '60px 20px' }}>
           {!tarot ? (
-            <div onClick={drawWithVibe} style={{ width: '220px', height: '320px', border: '1px solid #065f46', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #020806, #020806 8px, #030a08 8px, #030a08 16px)', transform: isShaking ? 'translateX(2px)' : 'none', transition: 'transform 0.05s' }}>
-               <div style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
+            <div onClick={drawWithVibe} style={{ width: '220px', height: '320px', border: '1px solid #701a75', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #08082a, #08082a 8px, #0d0d35 8px, #0d0d35 16px)', transform: isShaking ? 'translateX(2px)' : 'none', transition: 'transform 0.05s', boxShadow: '0 0 20px 2px #a855f720' }}>
+               <div style={{ color: '#a78bfa', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
             </div>
           ) : (
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -358,14 +360,14 @@ export default function Garden() {
                 {tarot.map(card => {
                   const temporal = card[card.position];
                   return (
-                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #065f46', borderRadius: '4px', padding: '35px 20px', background: '#040a08', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                      <p style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '5px', margin: 0 }}>{card.position}</p>
+                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #4c1d95', borderRadius: '4px', padding: '35px 20px', background: '#0d0d35', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                      <p style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: 0 }}>{card.position}</p>
                       <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s' }}>{card.icon}</div>
                       <h3 style={{ color: 'white', fontSize: '1.1rem', fontStyle: 'italic', margin: 0 }}>
                         {card.name}
-                        {card.reversed && <span style={{ color: '#065f46', fontSize: '11px', display: 'block', marginTop: '4px' }}>Shadow</span>}
+                        {card.reversed && <span style={{ color: '#c084fc', fontSize: '11px', display: 'block', marginTop: '4px' }}>Shadow</span>}
                       </h3>
-                      <p style={{ color: '#065f46', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0 }}>
+                      <p style={{ color: '#94a3b8', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0 }}>
                         {card.reversed ? 'Obstruction and shadow veil this time.' : temporal.meaning}
                       </p>
                     </div>
@@ -380,15 +382,17 @@ export default function Garden() {
 
       {activeTab === 'grimoire' && (
         <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-          <h2 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic', textAlign: 'center', marginBottom: '8px' }}>The Grimoire</h2>
-          <p style={{ fontSize: '9px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '5px', textAlign: 'center', marginBottom: '40px' }}>Sealed Workings</p>
+          <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', textAlign: 'center', marginBottom: '8px' }}>The Grimoire</h2>
+          <p style={{ background: 'linear-gradient(135deg, #a855f7, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '5px', textAlign: 'center', marginBottom: '40px' }}>Sealed Workings</p>
 
           <input
             type="text"
             placeholder="Search the workings..."
             value={grimoireSearch}
             onChange={e => setGrimoireSearch(e.target.value)}
-            style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #1e293b', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '16px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', marginBottom: '40px', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #701a75', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '16px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', marginBottom: '40px', boxSizing: 'border-box', transition: 'border-color 0.3s, box-shadow 0.3s' }}
+            onFocus={e => { e.currentTarget.style.borderBottomColor = '#a855f7'; e.currentTarget.style.boxShadow = '0 4px 12px -4px #a855f780'; }}
+            onBlur={e => { e.currentTarget.style.borderBottomColor = '#701a75'; e.currentTarget.style.boxShadow = 'none'; }}
           />
 
           {archives.length === 0 ? (
@@ -397,8 +401,8 @@ export default function Garden() {
             archives
               .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
               .map(log => (
-                <div key={log.id} style={{ background: '#040a08', border: '1px solid #065f46', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
+                <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #4c1d95', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
                   <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '14px', lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
               ))
@@ -408,8 +412,8 @@ export default function Garden() {
 
       {activeTab === 'stillroom' && (
         <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center', padding: '60px 20px' }}>
-          <h2 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic', marginBottom: '10px' }}>The Stillroom</h2>
-          <p style={{ fontSize: '9px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '5px', marginBottom: '60px' }}>Apothecary Analysis</p>
+          <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', marginBottom: '10px' }}>The Stillroom</h2>
+          <p style={{ background: 'linear-gradient(135deg, #a855f7, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '5px', marginBottom: '60px' }}>Apothecary Analysis</p>
 
           {selectedItems.length === 0 ? (
             <p style={{ color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>No material selected. Visit the Library.</p>
@@ -417,21 +421,21 @@ export default function Garden() {
             <>
               {dominantNote && (
                 <div style={{ marginBottom: '50px' }}>
-                  <p style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '12px' }}>Dominant Note</p>
+                  <p style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '12px' }}>Dominant Note</p>
                   <p style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', textTransform: 'capitalize' }}>{dominantNote}</p>
                 </div>
               )}
 
               {/* Cauldron circular layout */}
               <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 50px auto' }}>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '50%', border: '1px solid #065f46', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🫧</div>
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '50%', border: '1px solid #7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', boxShadow: '0 0 16px 2px #a855f730' }}>🫧</div>
                 {selectedItems.map((item, i) => {
                   const angle = (i / selectedItems.length) * 2 * Math.PI - Math.PI / 2;
                   const r = 85;
                   const x = 100 + r * Math.cos(angle) - 20;
                   const y = 100 + r * Math.sin(angle) - 20;
                   return (
-                    <div key={item.id} style={{ position: 'absolute', left: x, top: y, width: '40px', height: '40px', borderRadius: '50%', background: '#040a08', border: '1px solid #065f46', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                    <div key={item.id} style={{ position: 'absolute', left: x, top: y, width: '40px', height: '40px', borderRadius: '50%', background: '#0d0d35', border: '1px solid #4c1d95', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
                       {item.icon}
                     </div>
                   );
@@ -440,12 +444,12 @@ export default function Garden() {
 
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
                 {selectedItems.map(item => (
-                  <span key={item.id} style={{ fontSize: '10px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '2px', padding: '6px 14px', border: '1px solid #065f46', borderRadius: '2px' }}>{item.name}</span>
+                  <span key={item.id} style={{ fontSize: '10px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '2px', padding: '6px 14px', border: '1px solid #4c1d95', borderRadius: '2px' }}>{item.name}</span>
                 ))}
               </div>
-              <button onClick={() => { playChime('soft'); setSelectedItems([]); }} style={{ background: 'none', border: '1px solid #1e293b', color: '#1e293b', padding: '12px 30px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '4px', cursor: 'pointer', borderRadius: '2px', transition: 'all 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#065f46'; e.currentTarget.style.color = '#065f46'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#1e293b'; }}
+              <button onClick={() => { playChime('soft'); setSelectedItems([]); }} style={{ background: 'none', border: '1px solid #334155', color: '#475569', padding: '12px 30px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '4px', cursor: 'pointer', borderRadius: '2px', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.color = '#d8b4fe'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#475569'; }}
               >Clear Selections</button>
             </>
           )}
@@ -453,10 +457,10 @@ export default function Garden() {
       )}
 
       {ritualOutput && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: '#020806', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: '#08082a', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ maxWidth: '550px', width: '100%', padding: '40px' }}>
              <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '2.8rem', textAlign: 'center', marginBottom: '50px' }}>The Working</h2>
-             <div style={{ textAlign: 'left', marginBottom: '60px', borderLeft: '1px solid #10b981', paddingLeft: '35px' }}>
+             <div style={{ textAlign: 'left', marginBottom: '60px', borderLeft: '1px solid #7c3aed', paddingLeft: '35px' }}>
                 {ritualOutput.map((step, i) => (
                   <p key={i} style={{ fontSize: '16px', marginBottom: '25px', color: '#cbd5e1', lineHeight: '1.8' }}>{step}</p>
                 ))}
@@ -468,14 +472,14 @@ export default function Garden() {
 
       {selectedItems.length > 0 && !ritualOutput && (
         <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '600px', backgroundColor: 'rgba(0,0,0,0.95)', border: '1px solid #111', padding: '35px', textAlign: 'center', zIndex: 100 }}>
-          <p style={{ color: '#10b981', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', lineHeight: '1.6' }}>"{weaveMantra}"</p>
+          <p style={{ color: '#d8b4fe', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', lineHeight: '1.6' }}>"{weaveMantra}"</p>
           <button onClick={() => setRitualOutput([
             "Observe the weight of your chosen materia.",
             `Quiet your pulse and align with ${selectedItems[0].name}.`,
             tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
             `Speak the weave: "${weaveMantra}"`,
             "The intent is sealed. Step away from the ritual space."
-          ])} style={{ background: '#10b981', color: 'black', border: 'none', padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px' }}>Begin Ceremony</button>
+          ])} style={{ background: '#7c3aed', color: 'white', border: 'none', padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740' }}>Begin Ceremony</button>
         </div>
       )}
     </div>
