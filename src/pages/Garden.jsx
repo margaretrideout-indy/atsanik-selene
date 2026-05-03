@@ -284,7 +284,7 @@ export default function Garden() {
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Atsanik Selene</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
-             <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#d8b4fe' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '2px 4px', transition: 'all 0.3s' }}>{tab}</button>
+             <button key={tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'shimmer-btn' : ''} style={{ border: 'none', background: activeTab === tab ? undefined : 'none', color: activeTab === tab ? '#e9d5ff' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '3px 8px', transition: 'color 0.3s' }}>{tab}</button>
           ))}
         </div>
       </header>
@@ -360,7 +360,7 @@ export default function Garden() {
                 {tarot.map(card => {
                   const temporal = card[card.position];
                   return (
-                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #4c1d95', borderRadius: '4px', padding: '35px 20px', background: '#0d0d35', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #94a3b8', borderRadius: '4px', padding: '35px 20px', background: '#0d0d35', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
                       <p style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: 0 }}>{card.position}</p>
                       <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s' }}>{card.icon}</div>
                       <h3 style={{ color: 'white', fontSize: '1.1rem', fontStyle: 'italic', margin: 0 }}>
@@ -401,7 +401,7 @@ export default function Garden() {
             archives
               .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
               .map(log => (
-                <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #4c1d95', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
+                <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #94a3b8', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
                   <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
                   <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '14px', lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
@@ -465,7 +465,7 @@ export default function Garden() {
                   <p key={i} style={{ fontSize: '16px', marginBottom: '25px', color: '#cbd5e1', lineHeight: '1.8' }}>{step}</p>
                 ))}
              </div>
-             <button onClick={sealRitual} style={{ background: 'white', color: 'black', border: 'none', padding: '25px', width: '100%', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '5px' }}>Seal into Grimoire</button>
+             <button onClick={sealRitual} className="shimmer-btn" style={{ padding: '25px', width: '100%', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '5px', borderRadius: '2px' }}>Seal into Grimoire</button>
           </div>
         </div>
       )}
@@ -479,7 +479,7 @@ export default function Garden() {
             tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
             `Speak the weave: "${weaveMantra}"`,
             "The intent is sealed. Step away from the ritual space."
-          ])} style={{ background: '#7c3aed', color: 'white', border: 'none', padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740' }}>Begin Ceremony</button>
+          ])} className="shimmer-btn" style={{ padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740', borderRadius: '2px' }}>Begin Ceremony</button>
         </div>
       )}
     </div>

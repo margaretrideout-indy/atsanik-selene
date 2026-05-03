@@ -102,6 +102,25 @@
   }
 }
 
+/* Labradorite shimmer animation */
+@keyframes labradorite-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.shimmer-btn {
+  background: linear-gradient(135deg, #2e1065 0%, #7e22ce 50%, #22d3ee 100%);
+  background-size: 250% 250%;
+  animation: labradorite-shimmer 5s ease infinite;
+  color: #e9d5ff !important;
+  border: none;
+}
+
+.shimmer-btn:hover {
+  animation-duration: 1.5s;
+}
+
 /* Custom scrollbar for the dark theme */
 ::-webkit-scrollbar {
   width: 6px;
