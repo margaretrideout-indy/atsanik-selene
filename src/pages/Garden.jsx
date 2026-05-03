@@ -214,7 +214,7 @@ export default function Garden() {
   return (
     <div style={{ backgroundColor: '#020806', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
-        <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene Garden</h1>
+        <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene's Garden</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
           {['moon', 'library', 'tarot', 'stillroom'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
