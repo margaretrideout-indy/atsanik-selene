@@ -121,6 +121,18 @@
   animation-duration: 1.5s;
 }
 
+/* Fade to black cleanse animation */
+@keyframes fade-to-black {
+  0% { opacity: 1; }
+  40% { opacity: 0; background-color: #000; }
+  100% { opacity: 0; background-color: #000; }
+}
+
+.fade-to-black {
+  animation: fade-to-black 1.2s ease-in forwards;
+  pointer-events: none;
+}
+
 /* Inukshuk animations */
 @keyframes inukshuk-pulse {
   0%, 100% { filter: drop-shadow(0 0 4px #c084fc88) drop-shadow(0 0 8px #7c3aed44); }

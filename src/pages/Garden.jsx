@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import InukshukIcon from '../components/garden/InukshukIcon';
+import useMoonPhase from '../hooks/useMoonPhase';
+
+// Inuttitut seasonal calendar (approximate)
+function getInuttitutSeason() {
+  const m = new Date().getMonth(); // 0-indexed
+  if (m >= 2 && m <= 4) return 'Upingakuluk'; // Spring
+  if (m >= 5 && m <= 7) return 'Upingaarngnat'; // Summer
+  if (m >= 8 && m <= 10) return 'Ukiaksaaq'; // Autumn
+  return 'Ukiuq'; // Winter
+}
 
 // --- THE FULL MASTER DATABASE (85 ITEMS) ---
 const MASTER_DATA = [
@@ -174,6 +184,7 @@ const CACHE_TABS = [
 ];
 
 export default function Garden() {
+  const moonData = useMoonPhase();
   const [activeTab, setActiveTab] = useState('moon');
   const [subFilter, setSubFilter] = useState('Crystal');
   const [cacheTab, setCacheTab] = useState('all');
@@ -186,28 +197,16 @@ export default function Garden() {
   const [isShaking, setIsShaking] = useState(false);
   const [grimoireSearch, setGrimoireSearch] = useState("");
   const [capstoneSettling, setCapstoneSettling] = useState(false);
+  const [isCleansing, setIsCleansing] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
     if (saved) setArchives(JSON.parse(saved));
   }, []);
 
-  const playChime = (type = 'soft') => {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(type === 'deep' ? 220 : 440, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(type === 'deep' ? 110 : 880, audioCtx.currentTime + 0.8);
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.8);
-    } catch(e) {}
-  };
+  // Silence is the voice of Atsanik Selene — no audio.
+  const playChime = () => {};
 
   // --- NARRATIVE WEAVER ---
   const weaveMantra = useMemo(() => {
@@ -239,6 +238,16 @@ export default function Garden() {
     return story;
   }, [selectedItems, tarot]);
 
+  const returnToLand = () => {
+    setIsCleansing(true);
+    setTimeout(() => {
+      setSelectedItems([]);
+      setRitualOutput(null);
+      setTarot(null);
+      setIsCleansing(false);
+    }, 1300);
+  };
+
   const placeCapstone = () => {
     setCapstoneSettling(true);
     setTimeout(() => setCapstoneSettling(false), 700);
@@ -246,10 +255,11 @@ export default function Garden() {
   };
 
   const sealRitual = () => {
-    playChime('deep');
     const newEntry = {
       id: Date.now(),
       date: new Date().toLocaleDateString(),
+      moonPhase: moonData.phase || 'Unknown Phase',
+      season: getInuttitutSeason(),
       mantra: weaveMantra
     };
     const updated = [newEntry, ...archives];
@@ -341,9 +351,13 @@ export default function Garden() {
       {activeTab === 'cache' && (
         <>
           {/* Cache Header */}
-          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '30px', position: 'relative' }}>
             <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', marginBottom: '6px' }}>The Cache</h2>
             <p style={{ color: '#6d28d9', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', fontStyle: 'italic' }}>Stones gathered for the building of the path.</p>
+            <button onClick={() => setShowInfo(true)} title="About Atsanik Selene" style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: '1px solid #4c1d95', borderRadius: '50%', width: '28px', height: '28px', color: '#7c3aed', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.color = '#e9d5ff'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#4c1d95'; e.currentTarget.style.color = '#7c3aed'; }}
+            >i</button>
           </div>
 
           {/* Search bar */}
@@ -455,9 +469,13 @@ export default function Garden() {
               .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
               .map(log => (
                 <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #94a3b8', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <InukshukIcon size={14} style={{ color: '#7c3aed', flexShrink: 0 }} />
                     <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+                    {log.moonPhase && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.moonPhase}</span>}
+                    {log.season && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.season}</span>}
                   </div>
                   <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', margin: 0, lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
@@ -533,13 +551,49 @@ export default function Garden() {
       {selectedItems.length > 0 && !ritualOutput && (
         <div style={{ position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '600px', backgroundColor: 'rgba(0,0,0,0.95)', border: '1px solid #111', padding: '35px', textAlign: 'center', zIndex: 100 }}>
           <p style={{ color: '#d8b4fe', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', lineHeight: '1.6' }}>"{weaveMantra}"</p>
-          <button onClick={() => setRitualOutput([
-            "Observe the weight of your chosen materia.",
-            `Quiet your pulse and align with ${selectedItems[0].name}.`,
-            tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
-            `Speak the weave: "${weaveMantra}"`,
-            "The intent is sealed. Step away from the ritual space."
-          ])} className="shimmer-btn" style={{ padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740', borderRadius: '2px' }}>Begin Ceremony</button>
+          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={() => setRitualOutput([
+              "Observe the weight of your chosen materia.",
+              `Quiet your pulse and align with ${selectedItems[0].name}.`,
+              tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
+              `Speak the weave: "${weaveMantra}"`,
+              "The intent is sealed. Step away from the ritual space."
+            ])} className="shimmer-btn" style={{ padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740', borderRadius: '2px' }}>Begin Ceremony</button>
+            <button onClick={returnToLand} style={{ background: 'none', border: '1px solid #2d0040', color: '#6d28d9', padding: '15px 28px', fontWeight: '700', textTransform: 'uppercase', fontSize: '10px', cursor: 'pointer', letterSpacing: '3px', borderRadius: '2px', transition: 'all 0.3s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.color = '#c084fc'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#2d0040'; e.currentTarget.style.color = '#6d28d9'; }}
+            >Return to the Land</button>
+          </div>
+        </div>
+      )}
+
+      {/* Fade-to-black cleanse overlay */}
+      {isCleansing && (
+        <div className="fade-to-black" style={{ position: 'fixed', inset: 0, backgroundColor: '#000', zIndex: 2000 }} />
+      )}
+
+      {/* Info modal */}
+      {showInfo && (
+        <div onClick={() => setShowInfo(false)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '30px' }}>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '440px', width: '100%', background: '#0d0d35', border: '1px solid #94a3b8', borderRadius: '6px', padding: '50px 40px', textAlign: 'center' }}>
+            <InukshukIcon size={40} glowing style={{ color: '#c084fc', margin: '0 auto 24px auto', display: 'block' }} />
+            <h3 style={{ color: 'white', fontStyle: 'italic', fontSize: '1.6rem', fontWeight: 300, marginBottom: '30px', letterSpacing: '-0.5px' }}>About this Place</h3>
+            <div style={{ textAlign: 'left', borderLeft: '1px solid #4c1d95', paddingLeft: '20px' }}>
+              <p style={{ color: '#e9d5ff', fontSize: '13px', lineHeight: '1.9', marginBottom: '18px' }}>
+                <span style={{ color: '#c084fc', textTransform: 'uppercase', letterSpacing: '3px', fontSize: '9px', display: 'block', marginBottom: '4px' }}>Atsanik</span>
+                In Inuttitut, <em>atsanik</em> means the northern lights — the dancing spirits who weave colour across the winter sky. Here, they witness every working.
+              </p>
+              <p style={{ color: '#e9d5ff', fontSize: '13px', lineHeight: '1.9', marginBottom: '18px' }}>
+                <span style={{ color: '#c084fc', textTransform: 'uppercase', letterSpacing: '3px', fontSize: '9px', display: 'block', marginBottom: '4px' }}>Selene</span>
+                The Greek titaness of the moon, who pulls the tides and governs cycles of becoming and release. She rides her silver chariot across the night, marking time.
+              </p>
+              <p style={{ color: '#e9d5ff', fontSize: '13px', lineHeight: '1.9', marginBottom: '0' }}>
+                <span style={{ color: '#c084fc', textTransform: 'uppercase', letterSpacing: '3px', fontSize: '9px', display: 'block', marginBottom: '4px' }}>The Inukshuk</span>
+                A stone figure built by Inuit peoples to mark safe passage across the land. Here it stands as a guide for the soul — each stone placed is an intention set, each capstone a path confirmed.
+              </p>
+            </div>
+            <button onClick={() => setShowInfo(false)} style={{ marginTop: '36px', background: 'none', border: 'none', color: '#4c1d95', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '4px', cursor: 'pointer' }}>Close</button>
+          </div>
         </div>
       )}
     </div>
