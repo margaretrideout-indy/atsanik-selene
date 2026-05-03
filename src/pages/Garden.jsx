@@ -157,6 +157,7 @@ export default function Garden() {
   const [ritualOutput, setRitualOutput] = useState(null);
   const [archives, setArchives] = useState([]);
   const [isShaking, setIsShaking] = useState(false);
+  const [grimoireSearch, setGrimoireSearch] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
@@ -266,7 +267,7 @@ export default function Garden() {
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene's Garden</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
-          {['moon', 'library', 'tarot', 'stillroom'].map(tab => (
+          {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
           ))}
         </div>
@@ -281,16 +282,9 @@ export default function Garden() {
           </div>
           <div>
             <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#1e293b', letterSpacing: '4px', borderBottom: '1px solid #111', paddingBottom: '15px' }}>The Archives</h3>
-            {archives.length === 0 ? (
-              <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>History is waiting to be written.</p>
-            ) : (
-              archives.map(log => (
-                <div key={log.id} style={{ padding: '30px 0', borderBottom: '1px solid #050c09' }}>
-                  <span style={{ fontSize: '9px', color: '#065f46' }}>{log.date}</span>
-                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '12px', lineHeight: '1.7' }}>"{log.mantra}"</p>
-                </div>
-              ))
-            )}
+            <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
+              {archives.length === 0 ? 'History is waiting to be written.' : `${archives.length} ritual${archives.length > 1 ? 's' : ''} sealed.`}
+            </p>
           </div>
         </div>
       )}
@@ -363,6 +357,34 @@ export default function Garden() {
               </div>
               <button onClick={() => setTarot(null)} style={{ background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
             </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'grimoire' && (
+        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+          <h2 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic', textAlign: 'center', marginBottom: '8px' }}>The Grimoire</h2>
+          <p style={{ fontSize: '9px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '5px', textAlign: 'center', marginBottom: '40px' }}>Sealed Workings</p>
+
+          <input
+            type="text"
+            placeholder="Search the workings..."
+            value={grimoireSearch}
+            onChange={e => setGrimoireSearch(e.target.value)}
+            style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #1e293b', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '16px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', marginBottom: '40px', boxSizing: 'border-box' }}
+          />
+
+          {archives.length === 0 ? (
+            <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', textAlign: 'center' }}>History is waiting to be written.</p>
+          ) : (
+            archives
+              .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
+              .map(log => (
+                <div key={log.id} style={{ background: '#040a08', border: '1px solid #065f46', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
+                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '14px', lineHeight: '1.8' }}>"{log.mantra}"</p>
+                </div>
+              ))
           )}
         </div>
       )}
