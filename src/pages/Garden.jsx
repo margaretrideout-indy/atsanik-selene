@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import InukshukIcon from '../components/garden/InukshukIcon';
 
 // --- THE FULL MASTER DATABASE (85 ITEMS) ---
 const MASTER_DATA = [
@@ -164,16 +165,27 @@ const TAROT_CARDS = [
   }
 ];
 
+// Cache tab category mapping
+const CACHE_TABS = [
+  { label: 'All', value: 'all' },
+  { label: 'The Land', value: 'land', types: ['Herb'] },
+  { label: 'The Earth', value: 'earth', types: ['Crystal'] },
+  { label: 'The Spirit', value: 'spirit', types: ['Pantry', 'Colour'] },
+];
+
 export default function Garden() {
   const [activeTab, setActiveTab] = useState('moon');
   const [subFilter, setSubFilter] = useState('Crystal');
+  const [cacheTab, setCacheTab] = useState('all');
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [cacheSearch, setCacheSearch] = useState("");
   const [tarot, setTarot] = useState(null);
   const [ritualOutput, setRitualOutput] = useState(null);
   const [archives, setArchives] = useState([]);
   const [isShaking, setIsShaking] = useState(false);
   const [grimoireSearch, setGrimoireSearch] = useState("");
+  const [capstoneSettling, setCapstoneSettling] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
@@ -227,6 +239,12 @@ export default function Garden() {
     return story;
   }, [selectedItems, tarot]);
 
+  const placeCapstone = () => {
+    setCapstoneSettling(true);
+    setTimeout(() => setCapstoneSettling(false), 700);
+    sealRitual();
+  };
+
   const sealRitual = () => {
     playChime('deep');
     const newEntry = {
@@ -278,12 +296,27 @@ export default function Garden() {
     return matchesTab && matchesSearch;
   });
 
+  const cacheTabDef = CACHE_TABS.find(t => t.value === cacheTab);
+  const filteredCache = MASTER_DATA.filter(item => {
+    const matchesCategory = cacheTab === 'all' || cacheTabDef?.types?.includes(item.type);
+    const q = cacheSearch.toLowerCase();
+    const matchesSearch = q === '' ||
+      item.name.toLowerCase().includes(q) ||
+      item.property.toLowerCase().includes(q) ||
+      item.tags?.some(tag => tag.includes(q));
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
-        <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Atsanik Selene</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
+          <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
+          <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px', margin: 0 }}>Atsanik Selene</h1>
+          <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
+        </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
-          {['moon', 'library', 'tarot', 'stillroom', 'grimoire'].map(tab => (
+          {['moon', 'cache', 'tarot', 'stillroom', 'grimoire'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'shimmer-btn' : ''} style={{ border: 'none', background: activeTab === tab ? undefined : 'none', color: activeTab === tab ? '#e9d5ff' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '3px 8px', transition: 'color 0.3s' }}>{tab}</button>
           ))}
         </div>
@@ -305,45 +338,65 @@ export default function Garden() {
         </div>
       )}
 
-      {activeTab === 'library' && (
+      {activeTab === 'cache' && (
         <>
-          <div style={{ maxWidth: '400px', margin: '0 auto 60px auto' }}>
-            <input 
-              type="text" 
-              placeholder="Seek an intent..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #701a75', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '20px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', transition: 'border-color 0.3s, box-shadow 0.3s' }}
-            onFocus={e => { e.currentTarget.style.borderBottomColor = '#a855f7'; e.currentTarget.style.boxShadow = '0 4px 12px -4px #a855f780'; }}
-            onBlur={e => { e.currentTarget.style.borderBottomColor = '#701a75'; e.currentTarget.style.boxShadow = 'none'; }}
+          {/* Cache Header */}
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', marginBottom: '6px' }}>The Cache</h2>
+            <p style={{ color: '#6d28d9', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', fontStyle: 'italic' }}>Stones gathered for the building of the path.</p>
+          </div>
+
+          {/* Search bar */}
+          <div style={{ maxWidth: '400px', margin: '0 auto 30px auto' }}>
+            <input
+              type="text"
+              placeholder="Search the Cache..."
+              value={cacheSearch}
+              onChange={e => setCacheSearch(e.target.value)}
+              style={{ width: '100%', background: 'transparent', border: '1px solid #701a75', borderRadius: '4px', padding: '14px 20px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', transition: 'border-color 0.3s, box-shadow 0.3s', boxSizing: 'border-box' }}
+              onFocus={e => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.boxShadow = '0 0 14px -2px #a855f780'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#701a75'; e.currentTarget.style.boxShadow = 'none'; }}
             />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '25px', marginBottom: '50px' }}>
-            {['Crystal', 'Herb', 'Pantry', 'Colour'].map(type => (
-              <button key={type} onClick={() => setSubFilter(type)} style={{ background: 'none', color: subFilter === type ? '#d8b4fe' : '#334155', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px' }}>{type}</button>
+
+          {/* Sub-navigation */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '40px', flexWrap: 'wrap' }}>
+            {CACHE_TABS.map(t => (
+              <button key={t.value} onClick={() => setCacheTab(t.value)} style={{
+                background: cacheTab === t.value ? 'linear-gradient(135deg, #4c1d95, #6d28d9)' : 'transparent',
+                color: cacheTab === t.value ? '#e9d5ff' : '#6d28d9',
+                border: cacheTab === t.value ? '1px solid #7c3aed' : '1px solid #2d0040',
+                borderRadius: '3px', padding: '7px 18px', cursor: 'pointer',
+                fontSize: '9px', textTransform: 'uppercase', letterSpacing: '3px', fontWeight: '700',
+                boxShadow: cacheTab === t.value ? '0 0 10px 1px #7c3aed44' : 'none',
+                transition: 'all 0.25s'
+              }}>{t.label}</button>
             ))}
           </div>
+
+          {/* Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '200px' }}>
-            {filteredData.map(item => {
+            {filteredCache.map(item => {
               const isSelected = !!selectedItems.find(s => s.id === item.id);
-              const glowColor = PROPERTY_GLOW[item.property] || '#10b981';
+              const glowColor = PROPERTY_GLOW[item.property] || '#7c3aed';
               return (
-              <div key={item.id} onClick={() => {
-                playChime('soft');
-                if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
-                else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
-              }} style={{ background: isSelected ? '#064e3b08' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : 'none' }}
-                onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-                onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
-                onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : 0.3 }}>{item.icon}</div>
-                <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
-                <div style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
-              </div>
-            );})}
+                <div key={item.id} onClick={() => {
+                  playChime('soft');
+                  if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
+                  else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
+                }} style={{ background: isSelected ? '#1e0a3c' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : 'none' }}
+                  onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
+                  onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                  onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
+                  onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : 0.3 }}>{item.icon}</div>
+                  <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
+                  <div style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
+                </div>
+              );
+            })}
           </div>
         </>
       )}
@@ -402,8 +455,11 @@ export default function Garden() {
               .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
               .map(log => (
                 <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #94a3b8', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
-                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', marginTop: '14px', lineHeight: '1.8' }}>"{log.mantra}"</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                    <InukshukIcon size={14} style={{ color: '#7c3aed', flexShrink: 0 }} />
+                    <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
+                  </div>
+                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', margin: 0, lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
               ))
           )}
@@ -465,7 +521,11 @@ export default function Garden() {
                   <p key={i} style={{ fontSize: '16px', marginBottom: '25px', color: '#cbd5e1', lineHeight: '1.8' }}>{step}</p>
                 ))}
              </div>
-             <button onClick={sealRitual} className="shimmer-btn" style={{ padding: '25px', width: '100%', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '5px', borderRadius: '2px' }}>Seal into Grimoire</button>
+             <button onClick={placeCapstone} className="shimmer-btn" style={{ padding: '20px 25px', width: '100%', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '5px', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
+               <InukshukIcon size={22} settling={capstoneSettling} glowing={!capstoneSettling} style={{ color: '#e9d5ff' }} />
+               Place the Capstone
+               <InukshukIcon size={22} settling={capstoneSettling} glowing={!capstoneSettling} style={{ color: '#e9d5ff' }} />
+             </button>
           </div>
         </div>
       )}
