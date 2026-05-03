@@ -113,6 +113,7 @@ export default function Garden() {
   const [tarot, setTarot] = useState(null);
   const [ritualOutput, setRitualOutput] = useState(null);
   const [archives, setArchives] = useState([]);
+  const [isShaking, setIsShaking] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
@@ -184,6 +185,24 @@ export default function Garden() {
     setTarot({ ...card, reversed: isReversed });
   };
 
+  const drawWithVibe = () => {
+    setIsShaking(true);
+    setTimeout(() => {
+      setIsShaking(false);
+      drawTarot();
+    }, 400);
+  };
+
+  // --- DOMINANT NOTE (Apothecary) ---
+  const dominantNote = useMemo(() => {
+    if (selectedItems.length === 0) return null;
+    const freq = {};
+    selectedItems.forEach(item => {
+      item.tags?.forEach(tag => { freq[tag] = (freq[tag] || 0) + 1; });
+    });
+    return Object.entries(freq).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  }, [selectedItems]);
+
   const filteredData = MASTER_DATA.filter(item => {
     const matchesTab = item.type === subFilter;
     const matchesSearch = searchQuery === "" || 
@@ -197,7 +216,7 @@ export default function Garden() {
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px' }}>Selene Garden</h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
-          {['moon', 'library', 'tarot'].map(tab => (
+          {['moon', 'library', 'tarot', 'stillroom'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: 'none', border: 'none', color: activeTab === tab ? '#10b981' : '#1e293b', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900' }}>{tab}</button>
           ))}
         </div>
@@ -242,18 +261,26 @@ export default function Garden() {
               <button key={type} onClick={() => setSubFilter(type)} style={{ background: 'none', color: subFilter === type ? '#34d399' : '#1e293b', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px' }}>{type}</button>
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '30px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '200px' }}>
-            {filteredData.map(item => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '200px' }}>
+            {filteredData.map(item => {
+              const isSelected = !!selectedItems.find(s => s.id === item.id);
+              return (
               <div key={item.id} onClick={() => {
                 playChime('soft');
-                if (selectedItems.find(s => s.id === item.id)) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
+                if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
                 else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
-              }} style={{ background: selectedItems.find(s => s.id === item.id) ? '#064e3b08' : '#040a08', border: selectedItems.find(s => s.id === item.id) ? '1px solid #10b981' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer' }}>
-                <div style={{ fontSize: '32px', marginBottom: '20px', opacity: selectedItems.find(s => s.id === item.id) ? 1 : 0.3 }}>{item.icon}</div>
+              }} style={{ background: isSelected ? '#064e3b08' : '#040a08', border: isSelected ? '1px solid #10b981' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+                onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
+                onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
+                onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : 0.3 }}>{item.icon}</div>
                 <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
                 <div style={{ fontSize: '8px', color: '#065f46', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
               </div>
-            ))}
+            );})}
           </div>
         </>
       )}
@@ -261,7 +288,7 @@ export default function Garden() {
       {activeTab === 'tarot' && (
         <div style={{ textAlign: 'center', padding: '80px 20px' }}>
           {!tarot ? (
-            <div onClick={drawTarot} style={{ width: '220px', height: '320px', border: '1px solid #065f46', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #020806, #020806 8px, #030a08 8px, #030a08 16px)' }}>
+            <div onClick={drawWithVibe} style={{ width: '220px', height: '320px', border: '1px solid #065f46', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #020806, #020806 8px, #030a08 8px, #030a08 16px)', transform: isShaking ? 'translateX(2px)' : 'none', transition: 'transform 0.05s' }}>
                <div style={{ color: '#065f46', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
             </div>
           ) : (
@@ -271,6 +298,48 @@ export default function Garden() {
               <p style={{ color: '#065f46', fontSize: '14px', lineHeight: '2', fontStyle: 'italic', marginTop: '20px' }}>{tarot.meaning}</p>
               <button onClick={() => setTarot(null)} style={{ marginTop: '50px', background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
             </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'stillroom' && (
+        <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center', padding: '60px 20px' }}>
+          <h2 style={{ color: 'white', fontSize: '2rem', fontStyle: 'italic', marginBottom: '10px' }}>The Stillroom</h2>
+          <p style={{ fontSize: '9px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '5px', marginBottom: '60px' }}>Apothecary Analysis</p>
+
+          {selectedItems.length === 0 ? (
+            <p style={{ color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>No materia selected. Visit the Library.</p>
+          ) : (
+            <>
+              {dominantNote && (
+                <div style={{ marginBottom: '50px' }}>
+                  <p style={{ fontSize: '9px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '12px' }}>Dominant Note</p>
+                  <p style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', textTransform: 'capitalize' }}>{dominantNote}</p>
+                </div>
+              )}
+
+              {/* Cauldron circular layout */}
+              <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 50px auto' }}>
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '50%', border: '1px solid #065f46', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🫧</div>
+                {selectedItems.map((item, i) => {
+                  const angle = (i / selectedItems.length) * 2 * Math.PI - Math.PI / 2;
+                  const r = 85;
+                  const x = 100 + r * Math.cos(angle) - 20;
+                  const y = 100 + r * Math.sin(angle) - 20;
+                  return (
+                    <div key={item.id} style={{ position: 'absolute', left: x, top: y, width: '40px', height: '40px', borderRadius: '50%', background: '#040a08', border: '1px solid #065f46', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                      {item.icon}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+                {selectedItems.map(item => (
+                  <span key={item.id} style={{ fontSize: '10px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '2px', padding: '6px 14px', border: '1px solid #065f46', borderRadius: '2px' }}>{item.name}</span>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
