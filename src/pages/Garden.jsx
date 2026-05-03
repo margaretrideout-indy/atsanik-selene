@@ -308,7 +308,7 @@ export default function Garden() {
           <p style={{ fontSize: '9px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '5px', marginBottom: '60px' }}>Apothecary Analysis</p>
 
           {selectedItems.length === 0 ? (
-            <p style={{ color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>No materia selected. Visit the Library.</p>
+            <p style={{ color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>No material selected. Visit the Library.</p>
           ) : (
             <>
               {dominantNote && (
