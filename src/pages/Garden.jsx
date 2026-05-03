@@ -96,6 +96,22 @@ const MASTER_DATA = [
   { id: 'ca6', name: 'Yellow', type: 'Colour', property: 'Intelligence', icon: '💛', tags: ['clarity', 'confidence', 'intelligence'] }
 ];
 
+// --- PROPERTY GLOW COLOURS ---
+const PROPERTY_GLOW = {
+  Love: '#ff6b8a', Peace: '#7dd3fc', Calm: '#a5f3fc', Intuition: '#c4b5fd',
+  Wealth: '#fde68a', Luck: '#86efac', Magic: '#e879f9', Truth: '#60a5fa',
+  Courage: '#fb923c', Creativity: '#f97316', Focus: '#38bdf8', Protection: '#6ee7b7',
+  Shield: '#34d399', Cleansing: '#f0f9ff', Grounding: '#a78bfa', Change: '#4ade80',
+  Vitality: '#f87171', Release: '#94a3b8', Logic: '#93c5fd', Balance: '#86efac',
+  Amplify: '#e2e8f0', Hope: '#67e8f9', Flow: '#38bdf8', Shadow: '#6b7280',
+  Patience: '#d1fae5', Opportunity: '#4ade80', Manifest: '#fcd34d', Vision: '#c084fc',
+  Dreams: '#f9a8d4', Passion: '#ef4444', Energy: '#22c55e', Memory: '#a3e635',
+  Cleanse: '#34d399', Speed: '#facc15', Healing: '#2dd4bf', Bravery: '#fb923c',
+  Enchant: '#d946ef', Boundary: '#14b8a6', Banish: '#64748b', Haste: '#f59e0b',
+  Sweetness: '#f9a8d4', Abundance: '#fbbf24', Bless: '#fde68a', Joy: '#fb923c',
+  Coin: '#fcd34d', Fate: '#a78bfa', Lust: '#f43f5e', Gold: '#eab308',
+};
+
 // --- TAROT DATABASE WITH TEMPORAL MEANINGS ---
 const TAROT_CARDS = [
   {
@@ -308,12 +324,13 @@ export default function Garden() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxWidth: '1000px', margin: '0 auto', paddingBottom: '200px' }}>
             {filteredData.map(item => {
               const isSelected = !!selectedItems.find(s => s.id === item.id);
+              const glowColor = PROPERTY_GLOW[item.property] || '#10b981';
               return (
               <div key={item.id} onClick={() => {
                 playChime('soft');
                 if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
                 else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
-              }} style={{ background: isSelected ? '#064e3b08' : '#040a08', border: isSelected ? '1px solid #10b981' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+              }} style={{ background: isSelected ? '#064e3b08' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : 'none' }}
                 onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                 onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -337,7 +354,7 @@ export default function Garden() {
             </div>
           ) : (
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
+              <div className="tarot-spread" style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
                 {tarot.map(card => {
                   const temporal = card[card.position];
                   return (
@@ -421,11 +438,15 @@ export default function Garden() {
                 })}
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
                 {selectedItems.map(item => (
                   <span key={item.id} style={{ fontSize: '10px', color: '#065f46', textTransform: 'uppercase', letterSpacing: '2px', padding: '6px 14px', border: '1px solid #065f46', borderRadius: '2px' }}>{item.name}</span>
                 ))}
               </div>
+              <button onClick={() => { playChime('soft'); setSelectedItems([]); }} style={{ background: 'none', border: '1px solid #1e293b', color: '#1e293b', padding: '12px 30px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '4px', cursor: 'pointer', borderRadius: '2px', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#065f46'; e.currentTarget.style.color = '#065f46'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#1e293b'; }}
+              >Clear Selections</button>
             </>
           )}
         </div>

@@ -90,6 +90,18 @@
   }
 }
 
+/* Tarot spread responsive stacking */
+@media (max-width: 600px) {
+  .tarot-spread {
+    flex-direction: column !important;
+    align-items: center;
+  }
+  .tarot-spread > div {
+    width: 100% !important;
+    max-width: 280px !important;
+  }
+}
+
 /* Custom scrollbar for the dark theme */
 ::-webkit-scrollbar {
   width: 6px;
