@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import InukshukIcon from '../components/garden/InukshukIcon';
+import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
 import useMoonPhase from '../hooks/useMoonPhase';
 
 // Inuttitut seasonal calendar (approximate)
@@ -175,6 +176,13 @@ const TAROT_CARDS = [
   }
 ];
 
+// Reconstruct items from a serialized sigil string
+function itemsFromSigil(sigilStr) {
+  if (!sigilStr) return [];
+  const ids = sigilStr.split(',');
+  return ids.map(id => MASTER_DATA.find(i => i.id === id)).filter(Boolean);
+}
+
 // Cache tab category mapping
 const CACHE_TABS = [
   { label: 'All', value: 'all' },
@@ -260,7 +268,8 @@ export default function Garden() {
       date: new Date().toLocaleDateString(),
       moonPhase: moonData.phase || 'Unknown Phase',
       season: getInuttitutSeason(),
-      mantra: weaveMantra
+      mantra: weaveMantra,
+      sigil: serializeSigil(selectedItems),
     };
     const updated = [newEntry, ...archives];
     setArchives(updated);
@@ -477,6 +486,11 @@ export default function Garden() {
                     {log.moonPhase && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.moonPhase}</span>}
                     {log.season && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.season}</span>}
                   </div>
+                  {log.sigil && (
+                    <div style={{ marginBottom: '16px', opacity: 0.6 }}>
+                      <SigilEngine items={itemsFromSigil(log.sigil)} size={100} />
+                    </div>
+                  )}
                   <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', margin: 0, lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
               ))
@@ -532,8 +546,14 @@ export default function Garden() {
 
       {ritualOutput && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: '#08082a', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ maxWidth: '550px', width: '100%', padding: '40px' }}>
-             <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '2.8rem', textAlign: 'center', marginBottom: '50px' }}>The Working</h2>
+          <div className="candle-flicker" style={{ maxWidth: '550px', width: '100%', padding: '40px' }}>
+             <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '2.8rem', textAlign: 'center', marginBottom: '30px' }}>The Working</h2>
+
+             {/* Generated Sigil */}
+             <div style={{ marginBottom: '40px', opacity: 0.85 }}>
+               <SigilEngine items={selectedItems} size={180} />
+             </div>
+
              <div style={{ textAlign: 'left', marginBottom: '60px', borderLeft: '1px solid #7c3aed', paddingLeft: '35px' }}>
                 {ritualOutput.map((step, i) => (
                   <p key={i} style={{ fontSize: '16px', marginBottom: '25px', color: '#cbd5e1', lineHeight: '1.8' }}>{step}</p>

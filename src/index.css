@@ -145,6 +145,23 @@
   100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 6px #c084fc88); opacity: 1; }
 }
 
+/* Candlelight flicker animation */
+@keyframes candle-flicker {
+  0%   { opacity: 1;    transform: scale(1); }
+  15%  { opacity: 0.97; transform: scale(1.002); }
+  30%  { opacity: 0.93; transform: scale(0.999) translateY(1px); }
+  45%  { opacity: 0.98; transform: scale(1.001); }
+  60%  { opacity: 0.91; transform: scale(0.998) translateY(-1px); }
+  75%  { opacity: 0.96; transform: scale(1.002); }
+  90%  { opacity: 0.94; transform: scale(0.999); }
+  100% { opacity: 1;    transform: scale(1); }
+}
+
+.candle-flicker {
+  animation: candle-flicker 3.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
 /* Custom scrollbar for the dark theme */
 ::-webkit-scrollbar {
   width: 6px;
