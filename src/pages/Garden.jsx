@@ -124,55 +124,55 @@ const PROPERTY_GLOW = {
   Coin: '#fcd34d', Fate: '#a78bfa', Lust: '#f43f5e', Gold: '#eab308',
 };
 
-// --- TAROT DATABASE WITH TEMPORAL MEANINGS ---
+// --- INUIT ARCHETYPE SYSTEM ---
 const TAROT_CARDS = [
   {
-    name: 'The Magician', icon: '🪄',
-    past: { meaning: 'A time of raw potential was seized and transformed into will.', fateLine: 'The Magician reminds you: you have already wielded great power.' },
-    present: { meaning: 'The bridge between intent and reality stands open before you.', fateLine: 'The Magician grants mastery over these elements, here and now.' },
-    future: { meaning: 'A convergence of skill and desire will bring manifestation.', fateLine: 'The Magician promises that mastery of your craft lies ahead.' }
+    name: 'The Traveler', suit: 'Archetype', icon: '🧭',
+    past: { meaning: 'A great departure was made — you left behind the familiar and stepped into the unknown.', fateLine: 'The Traveler marks the beginning of a journey already taken.' },
+    present: { meaning: 'The threshold is open. You stand at the edge of new territory with only your instincts.', fateLine: 'The Traveler blesses this working with the courage of the open tundra.' },
+    future: { meaning: 'A journey of risk and discovery lies ahead — trust the ice beneath your feet.', fateLine: 'The Traveler promises that the path will reveal itself as you walk.' }
   },
   {
-    name: 'The High Priestess', icon: '🌙',
-    past: { meaning: 'A secret was kept, a knowing held deep beneath the surface.', fateLine: 'The High Priestess guarded this truth in an earlier time.' },
-    present: { meaning: 'Sacred silence and deep inner knowing surround this moment.', fateLine: 'The High Priestess veils this intent in sacred silence.' },
-    future: { meaning: 'What is hidden will be revealed only to those who wait with patience.', fateLine: 'The High Priestess will unveil the mystery in its own season.' }
+    name: 'The Angakkuq', suit: 'Archetype', icon: '🥁',
+    past: { meaning: 'A time of raw power was seized — spirit was called and it answered.', fateLine: 'The Angakkuq reminds you: you have already walked between worlds.' },
+    present: { meaning: 'The drum beats. The veil between worlds is thin and the spirit channels are open.', fateLine: 'The Angakkuq grants passage between the seen and the unseen, here and now.' },
+    future: { meaning: 'A convergence of spirit and will is coming — the drum will call what is needed.', fateLine: 'The Angakkuq promises that the spirits will answer this intent.' }
   },
   {
-    name: 'The Empress', icon: '🌿',
-    past: { meaning: 'Nourishment and creative abundance shaped the seeds of who you are.', fateLine: 'The Empress tended the roots of this desire long ago.' },
-    present: { meaning: 'Creative abundance and fertile growth surround this working.', fateLine: 'The Empress breathes life into this nascent growth.' },
-    future: { meaning: 'A season of flourishing and embodied richness is drawing near.', fateLine: 'The Empress promises a harvest of all you have cultivated.' }
+    name: 'Sedna', suit: 'Archetype', icon: '🌊',
+    past: { meaning: 'A great sacrifice shaped the depths of who you are — loss became abundance.', fateLine: 'Sedna held this desire in the cold dark long before you knew its name.' },
+    present: { meaning: 'The mother of the sea stirs. What was lost is transforming into sustenance.', fateLine: 'Sedna breathes life from the deep into this working.' },
+    future: { meaning: 'A season of profound transformation is near — from sacrifice comes infinite giving.', fateLine: 'Sedna promises that the ocean of abundance will provide.' }
   },
   {
-    name: 'The Star', icon: '✨',
-    past: { meaning: 'After a great unravelling, hope was quietly rekindled within you.', fateLine: 'The Star was the light that led you out of an old darkness.' },
-    present: { meaning: 'Spiritual clarity and renewed faith illuminate this working.', fateLine: 'The Star illuminates the path for this working.' },
-    future: { meaning: 'Clarity and calm restoration await beyond the current storm.', fateLine: 'The Star will guide this intent to its most luminous outcome.' }
+    name: 'The Elder', suit: 'Archetype', icon: '❄️',
+    past: { meaning: 'Wisdom was passed down through long patience — you were shaped by those who came before.', fateLine: 'The Elder held this knowing in trust until you were ready.' },
+    present: { meaning: 'Authority and deep knowing anchor this moment. The old ways are the right ways here.', fateLine: 'The Elder steadies this working with the weight of generations.' },
+    future: { meaning: 'A time of leadership and earned authority approaches — the community will look to you.', fateLine: 'The Elder promises the strength of the long winter will serve you.' }
   },
   {
-    name: 'The Moon', icon: '🌑',
-    past: { meaning: 'Illusion and deep subconscious currents shaped the path you walked.', fateLine: 'The Moon was behind the veil of confusion you have since passed through.' },
-    present: { meaning: 'Wild intuition and the face of the subconscious are active now.', fateLine: 'The Moon reveals the hidden truth of this desire.' },
-    future: { meaning: 'The unconscious will surface; trust feeling over fact.', fateLine: 'The Moon will draw the unseen into the light of the next cycle.' }
+    name: 'The Qamutik', suit: 'Archetype', icon: '🛷',
+    past: { meaning: 'Momentum carried you over difficult terrain — the dogs knew the way even when you did not.', fateLine: 'The Qamutik bore this intention across the frozen distance already.' },
+    present: { meaning: 'Speed and directed will cut through all resistance. The path is clear; move now.', fateLine: 'The Qamutik drives this working forward with great and certain force.' },
+    future: { meaning: 'Rapid progress over hard ground is coming — harness the energy and do not hesitate.', fateLine: 'The Qamutik promises swift passage to the destination of your intent.' }
   },
   {
-    name: 'The Hermit', icon: '🕯️',
-    past: { meaning: 'A period of solitude and inward searching forged your wisdom.', fateLine: 'The Hermit walked with you through the long silence of becoming.' },
-    present: { meaning: 'Inner guidance and stillness are the most powerful tools available.', fateLine: 'The Hermit lights the way from within this very moment.' },
-    future: { meaning: 'A season of retreat and deep listening will bring great clarity.', fateLine: 'The Hermit will guide you inward before the next threshold opens.' }
+    name: 'The Lone Inukshuk', suit: 'Archetype', icon: '🪨',
+    past: { meaning: 'A period of solitary standing forged your inner landmark — you became a guide for others.', fateLine: 'The Lone Inukshuk stood with you through the long silence of becoming.' },
+    present: { meaning: 'Inner stillness is the most powerful tool. Be the marker, not the one who wanders.', fateLine: 'The Lone Inukshuk illuminates the way from within this very moment.' },
+    future: { meaning: 'A season of quiet witness and deep inner authority will bring great clarity.', fateLine: 'The Lone Inukshuk will mark the path before the next threshold opens.' }
   },
   {
-    name: 'Wheel of Fortune', icon: '🎡',
-    past: { meaning: 'A great turning brought you to where you stand today.', fateLine: 'The Wheel has already spun this fate into motion.' },
-    present: { meaning: 'Change is in motion; cycles are turning in your favour.', fateLine: 'The Wheel of Fortune turns this working toward its destined outcome.' },
-    future: { meaning: 'A pivotal shift in circumstance is approaching on the horizon.', fateLine: 'The Wheel promises a significant turn of events.' }
+    name: 'The Ulu', suit: 'Archetype', icon: '🔪',
+    past: { meaning: 'A great turning of seasons brought you to the work you now hold.', fateLine: 'The Ulu has already cut the old from the new — the turn has been made.' },
+    present: { meaning: 'Decisive skill is at work. The right cut at the right moment changes everything.', fateLine: 'The Ulu turns this working toward its destined and necessary outcome.' },
+    future: { meaning: 'A pivotal severing or transformation approaches — it will be clean and final.', fateLine: 'The Ulu promises a significant and liberating shift is coming.' }
   },
   {
-    name: 'The World', icon: '🌍',
-    past: { meaning: 'A great cycle reached its completion, leaving you whole.', fateLine: 'The World marked the end of a journey you have already walked.' },
-    present: { meaning: 'Integration, wholeness, and completion are available right now.', fateLine: 'The World declares this working already whole and complete.' },
-    future: { meaning: 'Full achievement and the joy of completion await at this path\'s end.', fateLine: 'The World promises fulfilment beyond what you dare to imagine.' }
+    name: 'The Drum', suit: 'Archetype', icon: '🌍',
+    past: { meaning: 'A great cycle danced to completion — the song was sung and the circle closed.', fateLine: 'The Drum marked the end of a dance you have already walked.' },
+    present: { meaning: 'Wholeness, integration, and joyful completion resound through this working now.', fateLine: 'The Drum declares this working already whole — the rhythm is complete.' },
+    future: { meaning: 'Full flowering and the joy of the drum circle await at this path\'s end.', fateLine: 'The Drum promises celebration beyond what you dare to imagine.' }
   }
 ];
 
@@ -335,7 +335,7 @@ export default function Garden() {
           <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
-          {['moon', 'cache', 'tarot', 'stillroom', 'grimoire'].map(tab => (
+          {['moon', 'cache', 'tarot', 'grimoire'].map(tab => (
              <button key={tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'shimmer-btn' : ''} style={{ border: 'none', background: activeTab === tab ? undefined : 'none', color: activeTab === tab ? '#e9d5ff' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '3px 8px', transition: 'color 0.3s' }}>{tab}</button>
           ))}
         </div>
@@ -436,14 +436,14 @@ export default function Garden() {
                 {tarot.map(card => {
                   const temporal = card[card.position];
                   return (
-                    <div key={card.position} style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #94a3b8', borderRadius: '4px', padding: '35px 20px', background: '#0d0d35', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                      <p style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: 0 }}>{card.position}</p>
-                      <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s' }}>{card.icon}</div>
-                      <h3 style={{ color: 'white', fontSize: '1.1rem', fontStyle: 'italic', margin: 0 }}>
+                    <div key={card.position} className="scrimshaw-card" style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #4a3060', borderRadius: '4px', padding: '35px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', position: 'relative', overflow: 'hidden' }}>
+                      <p style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
+                      <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s', position: 'relative', zIndex: 1 }}>{card.icon}</div>
+                      <h3 style={{ color: '#e2d9f3', fontSize: '1.1rem', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>
                         {card.name}
                         {card.reversed && <span style={{ color: '#c084fc', fontSize: '11px', display: 'block', marginTop: '4px' }}>Shadow</span>}
                       </h3>
-                      <p style={{ color: '#94a3b8', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0 }}>
+                      <p style={{ color: '#a0899e', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>
                         {card.reversed ? 'Obstruction and shadow veil this time.' : temporal.meaning}
                       </p>
                     </div>
@@ -494,52 +494,6 @@ export default function Garden() {
                   <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', margin: 0, lineHeight: '1.8' }}>"{log.mantra}"</p>
                 </div>
               ))
-          )}
-        </div>
-      )}
-
-      {activeTab === 'stillroom' && (
-        <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center', padding: '60px 20px' }}>
-          <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', marginBottom: '10px' }}>The Stillroom</h2>
-          <p style={{ background: 'linear-gradient(135deg, #a855f7, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '5px', marginBottom: '60px' }}>Apothecary Analysis</p>
-
-          {selectedItems.length === 0 ? (
-            <p style={{ color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>No material selected. Visit the Library.</p>
-          ) : (
-            <>
-              {dominantNote && (
-                <div style={{ marginBottom: '50px' }}>
-                  <p style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '12px' }}>Dominant Note</p>
-                  <p style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', textTransform: 'capitalize' }}>{dominantNote}</p>
-                </div>
-              )}
-
-              {/* Cauldron circular layout */}
-              <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 50px auto' }}>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '50%', border: '1px solid #7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', boxShadow: '0 0 16px 2px #a855f730' }}>🫧</div>
-                {selectedItems.map((item, i) => {
-                  const angle = (i / selectedItems.length) * 2 * Math.PI - Math.PI / 2;
-                  const r = 85;
-                  const x = 100 + r * Math.cos(angle) - 20;
-                  const y = 100 + r * Math.sin(angle) - 20;
-                  return (
-                    <div key={item.id} style={{ position: 'absolute', left: x, top: y, width: '40px', height: '40px', borderRadius: '50%', background: '#0d0d35', border: '1px solid #4c1d95', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-                      {item.icon}
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
-                {selectedItems.map(item => (
-                  <span key={item.id} style={{ fontSize: '10px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '2px', padding: '6px 14px', border: '1px solid #4c1d95', borderRadius: '2px' }}>{item.name}</span>
-                ))}
-              </div>
-              <button onClick={() => { playChime('soft'); setSelectedItems([]); }} style={{ background: 'none', border: '1px solid #334155', color: '#475569', padding: '12px 30px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '4px', cursor: 'pointer', borderRadius: '2px', transition: 'all 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.color = '#d8b4fe'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#475569'; }}
-              >Clear Selections</button>
-            </>
           )}
         </div>
       )}
