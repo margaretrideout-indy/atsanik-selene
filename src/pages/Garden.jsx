@@ -125,6 +125,18 @@ const PROPERTY_GLOW = {
   Coin: '#fcd34d', Fate: '#a78bfa', Lust: '#f43f5e', Gold: '#eab308',
 };
 
+// --- CUSTOM SCRIMSHAW ICON URLS ---
+const CUSTOM_ICONS = {
+  'The Traveler':    'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/7f81d436b_generated_image.png',
+  'The Drum':        'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/f56c6b812_generated_image.png',
+  'The Angakkuq':    'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/b00a8a777_generated_image.png',
+  'Sedna':           'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/7b5071d27_generated_image.png',
+  'The Elder':       'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/e087370b1_generated_image.png',
+  'The Qamutik':     'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/054f59e27_generated_image.png',
+  'The Lone Inukshuk': 'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/13ff9485a_generated_image.png',
+  'The Ulu':         'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/e1b97d2d8_generated_image.png',
+};
+
 // --- INUIT ARCHETYPE SYSTEM ---
 const TAROT_CARDS = [
   {
@@ -424,22 +436,77 @@ export default function Garden() {
               <div className="tarot-spread" style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
                 {tarot.map(card => {
                   const temporal = card[card.position];
+                  const customImg = CUSTOM_ICONS[card.name];
+                  const hasCustom = !!customImg;
                   return (
-                    <div key={card.position} className="scrimshaw-card" style={{ flex: '1 1 180px', maxWidth: '220px', border: '1px solid #4a3060', borderRadius: '4px', padding: '35px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', position: 'relative', overflow: 'hidden' }}>
-                      <p style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
-                      <div style={{ fontSize: '64px', transform: card.reversed ? 'rotate(180deg)' : 'none', transition: '1s', position: 'relative', zIndex: 1 }}>{card.icon}</div>
-                      <h3 style={{ color: '#e2d9f3', fontSize: '1.1rem', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>
+                    <div key={card.position} style={{
+                      flex: '1 1 180px', maxWidth: '220px',
+                      border: '1px solid #5b3472',
+                      borderRadius: '8px',
+                      padding: '28px 18px',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px',
+                      position: 'relative', overflow: 'hidden',
+                      background: 'rgba(25, 10, 45, 0.82)',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      boxShadow: '0 0 30px 4px #4c1d9530, inset 0 0 20px 0 #1a0a2a60',
+                    }}>
+                      <p style={{ fontSize: '8px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '5px', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
+
+                      {/* Icon: custom scrimshaw or emoji fallback */}
+                      <div style={{
+                        transform: card.reversed ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 1s',
+                        position: 'relative', zIndex: 1,
+                        width: '110px', height: '110px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {hasCustom ? (
+                          <img
+                            src={customImg}
+                            alt={card.name}
+                            style={{
+                              width: '110px',
+                              height: '110px',
+                              objectFit: 'contain',
+                              filter: 'drop-shadow(0 0 8px #c084fc55) drop-shadow(0 0 16px #22d3ee33)',
+                              animation: 'atsanik-pulse 4s ease-in-out infinite',
+                            }}
+                          />
+                        ) : (
+                          <span style={{ fontSize: '64px' }}>{card.icon}</span>
+                        )}
+                      </div>
+
+                      <h3 style={{
+                        color: '#e2d9f3',
+                        fontSize: '1.05rem',
+                        fontStyle: 'italic',
+                        margin: 0,
+                        position: 'relative', zIndex: 1,
+                        textShadow: hasCustom
+                          ? '0 0 12px #c084fc80, 0 0 24px #22d3ee40'
+                          : 'none',
+                        textAlign: 'center',
+                      }}>
                         {card.name}
-                        {card.reversed && <span style={{ color: '#c084fc', fontSize: '11px', display: 'block', marginTop: '4px' }}>Shadow</span>}
+                        {card.reversed && <span style={{ color: '#c084fc', fontSize: '11px', display: 'block', marginTop: '4px', textShadow: '0 0 8px #c084fc' }}>Shadow</span>}
                       </h3>
-                      <p style={{ color: '#a0899e', fontSize: '12px', lineHeight: '1.8', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>
+
+                      <p style={{ color: '#a0899e', fontSize: '11px', lineHeight: '1.8', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1, textAlign: 'center' }}>
                         {card.reversed ? 'Obstruction and shadow veil this time.' : temporal.meaning}
                       </p>
                     </div>
                   );
                 })}
               </div>
-              <button onClick={() => setTarot(null)} style={{ background: 'none', border: 'none', color: '#1e293b', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
+              <style>{`
+                @keyframes atsanik-pulse {
+                  0%, 100% { filter: drop-shadow(0 0 6px #c084fc55) drop-shadow(0 0 14px #22d3ee30); }
+                  50%       { filter: drop-shadow(0 0 14px #c084fcaa) drop-shadow(0 0 28px #22d3ee66); }
+                }
+              `}</style>
+              <button onClick={() => setTarot(null)} style={{ background: 'none', border: 'none', color: '#4c3060', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
             </div>
           )}
         </div>
