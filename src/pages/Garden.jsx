@@ -447,11 +447,11 @@ export default function Garden() {
                       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px',
                       position: 'relative', overflow: 'hidden',
                       background: 'rgba(25, 10, 45, 0.82)',
-                      backdropFilter: 'blur(8px)',
-                      WebkitBackdropFilter: 'blur(8px)',
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
                       boxShadow: '0 0 30px 4px #4c1d9530, inset 0 0 20px 0 #1a0a2a60',
                     }}>
-                      <p style={{ fontSize: '8px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '5px', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
+                      <p style={{ fontSize: '8px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
 
                       {/* Icon: custom scrimshaw or emoji fallback */}
                       <div style={{
@@ -469,7 +469,8 @@ export default function Garden() {
                               width: '110px',
                               height: '110px',
                               objectFit: 'contain',
-                              filter: 'drop-shadow(0 0 8px #c084fc55) drop-shadow(0 0 16px #22d3ee33)',
+                              mixBlendMode: 'screen',
+                              filter: 'drop-shadow(0 0 15px rgba(180, 160, 255, 0.4)) drop-shadow(0 0 8px #c084fc55) drop-shadow(0 0 16px #22d3ee33)',
                               animation: 'atsanik-pulse 4s ease-in-out infinite',
                             }}
                           />
