@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import InukshukIcon from '../components/garden/InukshukIcon';
+import MoonDisplay from '../components/garden/MoonDisplay';
 import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
 import useMoonPhase from '../hooks/useMoonPhase';
 
@@ -342,19 +343,7 @@ export default function Garden() {
       </header>
 
       {activeTab === 'moon' && (
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ fontSize: '120px', marginBottom: '25px', filter: 'hue-rotate(260deg) saturate(0.4) brightness(0.85) drop-shadow(0 0 24px #7c3aed66)' }}>🌖</div>
-            <h2 style={{ color: 'white', fontSize: '2.2rem', fontStyle: 'italic', fontWeight: '100' }}>Waning Gibbous</h2>
-            <p style={{ color: '#e9d5ff', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '6px', textShadow: '0 0 10px #bf80ff80' }}>Illumination 64%</p>
-          </div>
-          <div>
-            <h3 style={{ fontSize: '10px', textTransform: 'uppercase', color: '#e9d5ff', letterSpacing: '4px', borderBottom: '1px solid #2d0040', paddingBottom: '15px' }}>The Atsanik Chronicles</h3>
-            <p style={{ fontSize: '12px', color: '#a78bfa', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>
-              {archives.length === 0 ? 'History is waiting to be written.' : `${archives.length} ritual${archives.length > 1 ? 's' : ''} sealed.`}
-            </p>
-          </div>
-        </div>
+        <MoonDisplay archives={archives} />
       )}
 
       {activeTab === 'cache' && (
