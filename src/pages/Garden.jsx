@@ -4,6 +4,7 @@ import MoonDisplay from '../components/garden/MoonDisplay';
 import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
 import useMoonPhase from '../hooks/useMoonPhase';
 import InitiationFlow from '../components/garden/InitiationFlow';
+import GuidedRitualMode, { AuroraPulse, FloorThread } from '../components/garden/GuidedRitualMode';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -232,6 +233,40 @@ export default function Garden() {
   const [moonViewed, setMoonViewed] = useState(false);
   const navBtnRefs = useRef({});
 
+  // --- GUIDED RITUAL MODE ---
+  const [guidedMode, setGuidedMode] = useState(false);
+  const [guidedStep, setGuidedStep] = useState('moon');
+  const [showAurora, setShowAurora] = useState(false);
+
+  // Advance guided step based on state changes
+  useEffect(() => {
+    if (!guidedMode) return;
+    if (guidedStep === 'moon' && activeTab === 'moon') {
+      const t = setTimeout(() => setGuidedStep('cache'), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [guidedMode, guidedStep, activeTab]);
+
+  useEffect(() => {
+    if (!guidedMode) return;
+    if (guidedStep === 'cache' && selectedItems.length >= 2) {
+      setGuidedStep('tarot');
+      setActiveTab('tarot');
+    }
+  }, [guidedMode, guidedStep, selectedItems.length]);
+
+  useEffect(() => {
+    if (!guidedMode) return;
+    if (guidedStep === 'tarot' && tarot) {
+      setGuidedStep('grimoire');
+    }
+  }, [guidedMode, guidedStep, tarot]);
+
+  const isTabLocked = (tab) => {
+    if (!guidedMode) return false;
+    return tab !== guidedStep;
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
     if (saved) setArchives(JSON.parse(saved));
@@ -283,6 +318,11 @@ export default function Garden() {
   const placeCapstone = () => {
     setCapstoneSettling(true);
     setTimeout(() => setCapstoneSettling(false), 700);
+    if (guidedMode) {
+      setShowAurora(true);
+      setGuidedMode(false);
+      setGuidedStep('moon');
+    }
     sealRitual();
   };
 
@@ -358,6 +398,38 @@ export default function Garden() {
           <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px', margin: 0 }}>Atsanik Selene</h1>
           <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
         </div>
+
+        {/* Guided Ritual Mode toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '6px' }}>
+          <span style={{ fontSize: '8px', textTransform: 'uppercase', letterSpacing: '3px', color: guidedMode ? '#c084fc' : '#4c3060', transition: 'color 0.3s' }}>
+            Guided Ritual
+          </span>
+          <button
+            onClick={() => {
+              const next = !guidedMode;
+              setGuidedMode(next);
+              if (next) { setGuidedStep('moon'); setActiveTab('moon'); }
+            }}
+            style={{
+              width: '36px', height: '18px', borderRadius: '9px',
+              background: guidedMode ? 'linear-gradient(90deg, #6d28d9, #c084fc)' : '#1a0a2a',
+              border: guidedMode ? '1px solid #c084fc55' : '1px solid #2d1a4a',
+              cursor: 'pointer', position: 'relative', transition: 'all 0.35s',
+              boxShadow: guidedMode ? '0 0 10px 2px #c084fc44' : 'none',
+              padding: 0,
+            }}
+            title={guidedMode ? 'Disable Guided Ritual Mode' : 'Enable Guided Ritual Mode'}
+          >
+            <span style={{
+              position: 'absolute', top: '2px',
+              left: guidedMode ? '19px' : '2px',
+              width: '14px', height: '14px', borderRadius: '50%',
+              background: guidedMode ? '#e9d5ff' : '#4c3060',
+              transition: 'left 0.3s, background 0.3s',
+              display: 'block',
+            }} />
+          </button>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px', position: 'relative' }}>
           {['moon', 'cache', 'tarot', 'grimoire'].map(tab => {
             const isInitTarget = initiationActive && (
@@ -371,6 +443,7 @@ export default function Garden() {
                 key={tab}
                 ref={el => { navBtnRefs.current[tab] = el; }}
                 onClick={() => {
+                  if (isTabLocked(tab)) return;
                   setActiveTab(tab);
                   if (tab === 'moon' && !moonViewed) setTimeout(() => setMoonViewed(true), 3000);
                 }}
@@ -378,9 +451,13 @@ export default function Garden() {
                 style={{
                   border: 'none',
                   background: activeTab === tab ? undefined : 'none',
-                  color: activeTab === tab ? '#e9d5ff' : isInitTarget ? '#c084fc' : '#a78bfa',
+                  color: activeTab === tab
+                    ? '#e9d5ff'
+                    : isTabLocked(tab)
+                    ? '#2d1a4a'
+                    : isInitTarget ? '#c084fc' : '#a78bfa',
                   textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px',
-                  cursor: 'pointer', fontWeight: '900',
+                  cursor: isTabLocked(tab) ? 'not-allowed' : 'pointer', fontWeight: '900',
                   boxShadow: activeTab === tab
                     ? '0 0 12px 2px #bf80ff50'
                     : isInitTarget
@@ -388,6 +465,7 @@ export default function Garden() {
                     : 'none',
                   borderRadius: '2px', padding: '3px 8px', transition: 'all 0.3s',
                   animation: isInitTarget ? 'initiation-pulse 2.5s ease-in-out infinite' : 'none',
+                  filter: isTabLocked(tab) ? 'grayscale(1) opacity(0.3)' : 'none',
                 }}
               >{tab}</button>
             );
@@ -400,6 +478,16 @@ export default function Garden() {
           `}</style>
         </div>
       </header>
+
+      {/* Guided Mode micro-copy */}
+      {guidedMode && (
+        <GuidedRitualMode
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          currentStep={guidedStep}
+          navRefs={navBtnRefs}
+        />
+      )}
 
       {activeTab === 'moon' && (
         <MoonDisplay archives={archives} />
@@ -667,6 +755,12 @@ export default function Garden() {
           }}
         />
       )}
+
+      {/* Guided Mode floor thread */}
+      {guidedMode && <FloorThread activeTab={activeTab} navRefs={navBtnRefs} />}
+
+      {/* Aurora pulse on capstone completion */}
+      {showAurora && <AuroraPulse onDone={() => setShowAurora(false)} />}
 
       {/* Fade-to-black cleanse overlay */}
       {isCleansing && (
