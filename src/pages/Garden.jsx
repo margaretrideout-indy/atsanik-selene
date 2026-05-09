@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import InukshukIcon from '../components/garden/InukshukIcon';
 import MoonDisplay from '../components/garden/MoonDisplay';
 import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
 import useMoonPhase from '../hooks/useMoonPhase';
+import InitiationFlow from '../components/garden/InitiationFlow';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -204,6 +205,11 @@ const CACHE_TABS = [
   { label: 'The Spirit', value: 'spirit', types: ['Pantry', 'Colour'] },
 ];
 
+// Items highlighted during initiation Stage 2
+const INITIATION_HIGHLIGHTS = new Set(['h26', 'c7']); // Crowberry (herb), Labradorite (crystal)
+// Note: Crowberry isn't in master data, so we use Lavender (h1) + Labradorite (c7) as the two initiation items
+const INIT_HIGHLIGHT_IDS = new Set(['h1', 'c7']);
+
 export default function Garden() {
   const moonData = useMoonPhase();
   const [activeTab, setActiveTab] = useState('moon');
@@ -220,6 +226,11 @@ export default function Garden() {
   const [capstoneSettling, setCapstoneSettling] = useState(false);
   const [isCleansing, setIsCleansing] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
+  // --- INITIATION FLOW ---
+  const [initiationActive, setInitiationActive] = useState(() => !localStorage.getItem('selene_initiated'));
+  const [moonViewed, setMoonViewed] = useState(false);
+  const navBtnRefs = useRef({});
 
   useEffect(() => {
     const saved = localStorage.getItem('selene_archives');
@@ -347,10 +358,46 @@ export default function Garden() {
           <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px', margin: 0 }}>Atsanik Selene</h1>
           <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px' }}>
-          {['moon', 'cache', 'tarot', 'grimoire'].map(tab => (
-             <button key={tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'shimmer-btn' : ''} style={{ border: 'none', background: activeTab === tab ? undefined : 'none', color: activeTab === tab ? '#e9d5ff' : '#a78bfa', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px', cursor: 'pointer', fontWeight: '900', boxShadow: activeTab === tab ? '0 0 12px 2px #bf80ff50' : 'none', borderRadius: '2px', padding: '3px 8px', transition: 'color 0.3s' }}>{tab}</button>
-          ))}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px', position: 'relative' }}>
+          {['moon', 'cache', 'tarot', 'grimoire'].map(tab => {
+            const isInitTarget = initiationActive && (
+              (tab === 'moon' && !moonViewed) ||
+              (tab === 'cache' && moonViewed && selectedItems.length === 0) ||
+              (tab === 'tarot' && selectedItems.length > 0 && !tarot) ||
+              (tab === 'grimoire' && tarot && selectedItems.length > 0)
+            );
+            return (
+              <button
+                key={tab}
+                ref={el => { navBtnRefs.current[tab] = el; }}
+                onClick={() => {
+                  setActiveTab(tab);
+                  if (tab === 'moon' && !moonViewed) setTimeout(() => setMoonViewed(true), 3000);
+                }}
+                className={activeTab === tab ? 'shimmer-btn' : ''}
+                style={{
+                  border: 'none',
+                  background: activeTab === tab ? undefined : 'none',
+                  color: activeTab === tab ? '#e9d5ff' : isInitTarget ? '#c084fc' : '#a78bfa',
+                  textTransform: 'uppercase', fontSize: '10px', letterSpacing: '5px',
+                  cursor: 'pointer', fontWeight: '900',
+                  boxShadow: activeTab === tab
+                    ? '0 0 12px 2px #bf80ff50'
+                    : isInitTarget
+                    ? '0 0 0 3px #c084fc30, 0 0 10px 2px #c084fc44'
+                    : 'none',
+                  borderRadius: '2px', padding: '3px 8px', transition: 'all 0.3s',
+                  animation: isInitTarget ? 'initiation-pulse 2.5s ease-in-out infinite' : 'none',
+                }}
+              >{tab}</button>
+            );
+          })}
+          <style>{`
+            @keyframes initiation-pulse {
+              0%, 100% { box-shadow: 0 0 0 0 #c084fc44; color: #c084fc; }
+              50%       { box-shadow: 0 0 0 6px #c084fc15, 0 0 14px 3px #c084fc55; color: #e9d5ff; }
+            }
+          `}</style>
         </div>
       </header>
 
@@ -403,21 +450,25 @@ export default function Garden() {
             {filteredCache.map(item => {
               const isSelected = !!selectedItems.find(s => s.id === item.id);
               const glowColor = PROPERTY_GLOW[item.property] || '#7c3aed';
+              const isInitHighlight = initiationActive && selectedItems.length === 0 && INIT_HIGHLIGHT_IDS.has(item.id);
               return (
                 <div key={item.id} onClick={() => {
                   playChime('soft');
                   if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
                   else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
-                }} style={{ background: isSelected ? '#1e0a3c' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : 'none' }}
+                }} style={{ background: isSelected ? '#1e0a3c' : isInitHighlight ? '#120828' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : isInitHighlight ? '1px solid #c084fc66' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : isInitHighlight ? '0 0 20px 4px #c084fc22, 0 0 0 1px #c084fc33' : 'none', animation: isInitHighlight ? 'init-item-pulse 3s ease-in-out infinite' : 'none' }}
                   onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                   onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                   onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
                   onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
                 >
-                  <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : 0.3 }}>{item.icon}</div>
-                  <div style={{ color: 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
-                  <div style={{ fontSize: '8px', color: '#a78bfa', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
+                  <div style={{ fontSize: '32px', marginBottom: '20px', opacity: isSelected ? 1 : isInitHighlight ? 0.85 : 0.3 }}>{item.icon}</div>
+                  <div style={{ color: isInitHighlight && !isSelected ? '#e9d5ff' : 'white', fontSize: '15px', fontStyle: 'italic' }}>{item.name}</div>
+                  <div style={{ fontSize: '8px', color: isInitHighlight && !isSelected ? '#c084fc' : '#a78bfa', textTransform: 'uppercase', marginTop: '8px' }}>{item.property}</div>
+                  {isInitHighlight && !isSelected && (
+                    <div style={{ fontSize: '7px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '3px', marginTop: '6px', opacity: 0.8 }}>✦ gather this</div>
+                  )}
                 </div>
               );
             })}
@@ -502,6 +553,10 @@ export default function Garden() {
                 })}
               </div>
               <style>{`
+                @keyframes init-item-pulse {
+                  0%, 100% { box-shadow: 0 0 10px 2px #c084fc18, 0 0 0 1px #c084fc22; }
+                  50%       { box-shadow: 0 0 24px 6px #c084fc38, 0 0 0 1px #c084fc66; }
+                }
                 @keyframes atsanik-pulse {
                   0%, 100% { filter: drop-shadow(0 0 6px #c084fc55) drop-shadow(0 0 14px #22d3ee30); }
                   50%       { filter: drop-shadow(0 0 14px #c084fcaa) drop-shadow(0 0 28px #22d3ee66); }
@@ -596,6 +651,21 @@ export default function Garden() {
             >Return to the Land</button>
           </div>
         </div>
+      )}
+
+      {/* Initiation Flow */}
+      {initiationActive && (
+        <InitiationFlow
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          moonViewed={moonViewed}
+          itemsSelected={selectedItems.length > 0}
+          tarotDrawn={!!tarot}
+          onDismiss={() => {
+            setInitiationActive(false);
+            localStorage.setItem('selene_initiated', '1');
+          }}
+        />
       )}
 
       {/* Fade-to-black cleanse overlay */}
