@@ -5,6 +5,8 @@ import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
 import useMoonPhase from '../hooks/useMoonPhase';
 import InitiationFlow from '../components/garden/InitiationFlow';
 import GuidedRitualMode, { AuroraPulse, FloorThread } from '../components/garden/GuidedRitualMode';
+import TarotSpread, { POSITION_LABELS } from '../components/garden/TarotSpread';
+import GrimoireTab from '../components/garden/GrimoireTab';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -220,10 +222,10 @@ export default function Garden() {
   const [searchQuery, setSearchQuery] = useState("");
   const [cacheSearch, setCacheSearch] = useState("");
   const [tarot, setTarot] = useState(null);
+  const [spreadSize, setSpreadSize] = useState(3);
   const [ritualOutput, setRitualOutput] = useState(null);
   const [archives, setArchives] = useState([]);
   const [isShaking, setIsShaking] = useState(false);
-  const [grimoireSearch, setGrimoireSearch] = useState("");
   const [capstoneSettling, setCapstoneSettling] = useState(false);
   const [isCleansing, setIsCleansing] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -293,12 +295,12 @@ export default function Garden() {
     
     story += `this working for ${intent} is now bound. The Atsanik dance above as the work is witnessed. `;
 
-    if (tarot && tarot.length === 3) {
+    if (tarot && tarot.length > 0) {
       tarot.forEach(card => {
-        const temporal = card[card.position];
+        const temporal = card[card.position] || card.past || {};
         story += card.reversed
           ? `In the ${card.position}, ${card.name} reversed warns: shadow and obstruction linger. `
-          : `In the ${card.position}, ${temporal.fateLine} `;
+          : `In the ${card.position}, ${temporal.fateLine || ''} `;
       });
     }
 
@@ -329,11 +331,31 @@ export default function Garden() {
   const sealRitual = () => {
     const newEntry = {
       id: Date.now(),
+      timestamp: new Date().toISOString(),
       date: new Date().toLocaleDateString(),
-      moonPhase: moonData.phase || 'Unknown Phase',
+      moonPhase: moonData?.phase || 'Unknown Phase',
+      moonIllumination: moonData?.illumination ?? null,
       season: getInuttitutSeason(),
       mantra: weaveMantra,
       sigil: serializeSigil(selectedItems),
+      // Rich persisted data
+      cacheItems: selectedItems.map(({ id, name, type, property, icon, tags }) => ({ id, name, type, property, icon, tags })),
+      tarot: tarot ? tarot.map(card => ({
+        name: card.name,
+        position: card.position,
+        reversed: card.reversed,
+        icon: card.icon,
+        past: card.past,
+        present: card.present,
+        future: card.future,
+        center: card.center,
+        mirror: card.mirror,
+        north: card.north,
+        east: card.east,
+        west: card.west,
+        south: card.south,
+      })) : [],
+      spreadSize,
     };
     const updated = [newEntry, ...archives];
     setArchives(updated);
@@ -345,12 +367,13 @@ export default function Garden() {
   const drawTarot = () => {
     playChime('soft');
     const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
-    const three = shuffled.slice(0, 3).map((card, i) => ({
+    const positions = POSITION_LABELS[spreadSize] || POSITION_LABELS[3];
+    const drawn = shuffled.slice(0, positions.length).map((card, i) => ({
       ...card,
-      position: ['past', 'present', 'future'][i],
+      position: positions[i].toLowerCase(),
       reversed: Math.random() > 0.8,
     }));
-    setTarot(three);
+    setTarot(drawn);
   };
 
   const drawWithVibe = () => {
@@ -565,137 +588,18 @@ export default function Garden() {
       )}
 
       {activeTab === 'tarot' && (
-        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-          {!tarot ? (
-            <div onClick={drawWithVibe} style={{ width: '220px', height: '320px', border: '1px solid #701a75', borderRadius: '4px', margin: '0 auto', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'repeating-linear-gradient(45deg, #08082a, #08082a 8px, #0d0d35 8px, #0d0d35 16px)', transform: isShaking ? 'translateX(2px)' : 'none', transition: 'transform 0.05s', boxShadow: '0 0 20px 2px #a855f720' }}>
-               <div style={{ color: '#a78bfa', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>Consign to Fate</div>
-            </div>
-          ) : (
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-              <div className="tarot-spread" style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
-                {tarot.map(card => {
-                  const temporal = card[card.position];
-                  const customImg = CUSTOM_ICONS[card.name];
-                  const hasCustom = !!customImg;
-                  return (
-                    <div key={card.position} style={{
-                      flex: '1 1 180px', maxWidth: '220px',
-                      border: '1px solid #5b3472',
-                      borderRadius: '8px',
-                      padding: '28px 18px',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px',
-                      position: 'relative', overflow: 'hidden',
-                      background: 'rgba(25, 10, 45, 0.82)',
-                      backdropFilter: 'blur(12px)',
-                      WebkitBackdropFilter: 'blur(12px)',
-                      boxShadow: '0 0 30px 4px #4c1d9530, inset 0 0 20px 0 #1a0a2a60',
-                    }}>
-                      <p style={{ fontSize: '8px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0, position: 'relative', zIndex: 1 }}>{card.position}</p>
-
-                      {/* Icon: custom scrimshaw or emoji fallback */}
-                      <div style={{
-                        transform: card.reversed ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 1s',
-                        position: 'relative', zIndex: 1,
-                        width: '110px', height: '110px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        {hasCustom ? (
-                          <img
-                            src={customImg}
-                            alt={card.name}
-                            style={{
-                              width: '110px',
-                              height: '110px',
-                              objectFit: 'contain',
-                              mixBlendMode: 'screen',
-                              filter: 'drop-shadow(0 0 15px rgba(180, 160, 255, 0.4)) drop-shadow(0 0 8px #c084fc55) drop-shadow(0 0 16px #22d3ee33)',
-                              animation: 'atsanik-pulse 4s ease-in-out infinite',
-                            }}
-                          />
-                        ) : (
-                          <span style={{ fontSize: '64px' }}>{card.icon}</span>
-                        )}
-                      </div>
-
-                      <h3 style={{
-                        color: '#e2d9f3',
-                        fontSize: '1.05rem',
-                        fontStyle: 'italic',
-                        margin: 0,
-                        position: 'relative', zIndex: 1,
-                        textShadow: hasCustom
-                          ? '0 0 12px #c084fc80, 0 0 24px #22d3ee40'
-                          : 'none',
-                        textAlign: 'center',
-                      }}>
-                        {card.name}
-                        {card.reversed && <span style={{ color: '#c084fc', fontSize: '11px', display: 'block', marginTop: '4px', textShadow: '0 0 8px #c084fc' }}>Shadow</span>}
-                      </h3>
-
-                      <p style={{ color: '#a0899e', fontSize: '11px', lineHeight: '1.8', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1, textAlign: 'center' }}>
-                        {card.reversed ? 'Obstruction and shadow veil this time.' : temporal.meaning}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-              <style>{`
-                @keyframes init-item-pulse {
-                  0%, 100% { box-shadow: 0 0 10px 2px #c084fc18, 0 0 0 1px #c084fc22; }
-                  50%       { box-shadow: 0 0 24px 6px #c084fc38, 0 0 0 1px #c084fc66; }
-                }
-                @keyframes atsanik-pulse {
-                  0%, 100% { filter: drop-shadow(0 0 6px #c084fc55) drop-shadow(0 0 14px #22d3ee30); }
-                  50%       { filter: drop-shadow(0 0 14px #c084fcaa) drop-shadow(0 0 28px #22d3ee66); }
-                }
-              `}</style>
-              <button onClick={() => setTarot(null)} style={{ background: 'none', border: 'none', color: '#4c3060', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}>Return to silence</button>
-            </div>
-          )}
-        </div>
+        <TarotSpread
+          tarot={tarot}
+          spreadSize={spreadSize}
+          onSpreadSizeChange={setSpreadSize}
+          onDraw={drawWithVibe}
+          onReset={() => setTarot(null)}
+          isShaking={isShaking}
+        />
       )}
 
       {activeTab === 'grimoire' && (
-        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-          <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', textAlign: 'center', marginBottom: '8px' }}>The Grimoire</h2>
-          <p style={{ background: 'linear-gradient(135deg, #a855f7, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '5px', textAlign: 'center', marginBottom: '40px' }}>Sealed Workings</p>
-
-          <input
-            type="text"
-            placeholder="Search the workings..."
-            value={grimoireSearch}
-            onChange={e => setGrimoireSearch(e.target.value)}
-            style={{ width: '100%', background: 'transparent', borderBottom: '1px solid #701a75', borderTop: 'none', borderLeft: 'none', borderRight: 'none', padding: '16px', color: 'white', outline: 'none', textAlign: 'center', fontStyle: 'italic', marginBottom: '40px', boxSizing: 'border-box', transition: 'border-color 0.3s, box-shadow 0.3s' }}
-            onFocus={e => { e.currentTarget.style.borderBottomColor = '#a855f7'; e.currentTarget.style.boxShadow = '0 4px 12px -4px #a855f780'; }}
-            onBlur={e => { e.currentTarget.style.borderBottomColor = '#701a75'; e.currentTarget.style.boxShadow = 'none'; }}
-          />
-
-          {archives.length === 0 ? (
-            <p style={{ fontSize: '12px', color: '#1e293b', fontStyle: 'italic', textAlign: 'center' }}>History is waiting to be written.</p>
-          ) : (
-            archives
-              .filter(log => grimoireSearch === '' || log.mantra.toLowerCase().includes(grimoireSearch.toLowerCase()))
-              .map(log => (
-                <div key={log.id} style={{ background: '#0d0d35', border: '1px solid #94a3b8', padding: '30px', borderRadius: '4px', marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                    <InukshukIcon size={14} style={{ color: '#7c3aed', flexShrink: 0 }} />
-                    <span style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '3px' }}>{log.date}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
-                    {log.moonPhase && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.moonPhase}</span>}
-                    {log.season && <span style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px' }}>⟡ {log.season}</span>}
-                  </div>
-                  {log.sigil && (
-                    <div style={{ marginBottom: '16px', opacity: 0.6 }}>
-                      <SigilEngine items={itemsFromSigil(log.sigil)} size={100} />
-                    </div>
-                  )}
-                  <p style={{ fontSize: '15px', fontStyle: 'italic', color: 'white', margin: 0, lineHeight: '1.8' }}>"{log.mantra}"</p>
-                </div>
-              ))
-          )}
-        </div>
+        <GrimoireTab archives={archives} masterData={MASTER_DATA} />
       )}
 
       {ritualOutput && (
@@ -729,7 +633,7 @@ export default function Garden() {
             <button onClick={() => setRitualOutput([
               "Observe the weight of your chosen materia.",
               `Quiet your pulse and align with ${selectedItems[0].name}.`,
-              tarot ? `Acknowledge the threefold counsel: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
+              tarot ? `Acknowledge the counsel of ${tarot.length}: ${tarot.map(c => c.name).join(', ')}.` : "Hold the vision with absolute clarity.",
               `Speak the weave: "${weaveMantra}"`,
               "The intent is sealed. Step away from the ritual space."
             ])} className="shimmer-btn" style={{ padding: '15px 40px', fontWeight: '900', textTransform: 'uppercase', fontSize: '11px', cursor: 'pointer', letterSpacing: '3px', boxShadow: '0 0 20px 4px #a855f740', borderRadius: '2px' }}>Begin Ceremony</button>
