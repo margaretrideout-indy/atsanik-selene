@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // --- Cipher Logic ---
-// Map consonants to grid cells 1-9
-// 1=B/C, 2=D/F, 3=G/H, 4=J/K, 5=L/M, 6=N/P, 7=Q/R, 8=S/T, 9=V/W/X/Y/Z
+// Square of Saturn mapping (traditional)
+// 1=J,S  2=B,K,T  3=C,L  4=D,M,V  5=N,W  6=F,X  7=G,P,Y  8=H,Q,Z  9=R
 const CONSONANT_MAP = {
-  B:1, C:1,
-  D:2, F:2,
-  G:3, H:3,
-  J:4, K:4,
-  L:5, M:5,
-  N:6, P:6,
-  Q:7, R:7,
-  S:8, T:8,
-  V:9, W:9, X:9, Y:9, Z:9,
+  J:1, S:1,
+  B:2, K:2, T:2,
+  C:3, L:3,
+  D:4, M:4, V:4,
+  N:5, W:5,
+  F:6, X:6,
+  G:7, P:7, Y:7,
+  H:8, Q:8, Z:8,
+  R:9,
 };
 
 const VOWELS = new Set(['A','E','I','O','U']);
@@ -336,9 +336,9 @@ export default function IntentSigil({ onBind }) {
           {/* Cell legend */}
           <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
             {[
-              ['1', 'B·C'], ['2', 'D·F'], ['3', 'G·H'],
-              ['4', 'J·K'], ['5', 'L·M'], ['6', 'N·P'],
-              ['7', 'Q·R'], ['8', 'S·T'], ['9', 'V·W·X·Y·Z'],
+              ['1', 'J·S'], ['2', 'B·K·T'], ['3', 'C·L'],
+              ['4', 'D·M·V'], ['5', 'N·W'], ['6', 'F·X'],
+              ['7', 'G·P·Y'], ['8', 'H·Q·Z'], ['9', 'R'],
             ].map(([num, letters]) => (
               <span key={num} style={{
                 fontSize: '7px', color: activeCells.includes(Number(num)) ? '#c084fc' : '#1e0a3c',
