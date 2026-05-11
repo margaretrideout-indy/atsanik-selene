@@ -141,6 +141,30 @@ function RitualReview({ log, masterData, onClose }) {
           </div>
         )}
 
+        {/* Intent Sigil */}
+        {log.intentSigil && (
+          <div style={{ marginBottom: '28px' }}>
+            <p style={{ fontSize: '8px', color: '#4c1d95', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '12px' }}>Bound Intent</p>
+            <div style={{
+              background: '#05011a', border: '1px solid #22d3ee30', borderRadius: '8px',
+              padding: '18px 20px',
+              boxShadow: '0 0 16px 2px #22d3ee10',
+            }}>
+              <p style={{ fontSize: '14px', fontStyle: 'italic', color: '#e9d5ff', margin: '0 0 10px', textShadow: '0 0 10px #c084fc40' }}>
+                "{log.intentSigil.intent}"
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {log.intentSigil.consonants?.map((ch, i) => (
+                  <span key={i} style={{
+                    fontSize: '11px', color: '#22d3ee', fontFamily: 'serif', fontStyle: 'italic',
+                    letterSpacing: '4px', textShadow: '0 0 8px #22d3ee60',
+                  }}>{ch}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mantra */}
         <div style={{ borderLeft: '1px solid #4c1d95', paddingLeft: '20px', marginBottom: '36px' }}>
           <p style={{ fontSize: '8px', color: '#4c1d95', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '10px' }}>The Weave</p>

@@ -7,6 +7,7 @@ import InitiationFlow from '../components/garden/InitiationFlow';
 import GuidedRitualMode, { AuroraPulse, FloorThread } from '../components/garden/GuidedRitualMode';
 import TarotSpread, { POSITION_LABELS } from '../components/garden/TarotSpread';
 import GrimoireTab from '../components/garden/GrimoireTab';
+import IntentSigil from '../components/garden/IntentSigil';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -227,6 +228,7 @@ export default function Garden() {
   const [archives, setArchives] = useState([]);
   const [isShaking, setIsShaking] = useState(false);
   const [capstoneSettling, setCapstoneSettling] = useState(false);
+  const [intentSigilData, setIntentSigilData] = useState(null); // { intent, consonants, cells }
   const [isCleansing, setIsCleansing] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
@@ -356,12 +358,14 @@ export default function Garden() {
         south: card.south,
       })) : [],
       spreadSize,
+      intentSigil: intentSigilData || null,
     };
     const updated = [newEntry, ...archives];
     setArchives(updated);
     localStorage.setItem('selene_archives', JSON.stringify(updated));
     setRitualOutput(null);
     setSelectedItems([]);
+    setIntentSigilData(null);
   };
 
   const drawTarot = () => {
@@ -456,13 +460,14 @@ export default function Garden() {
           </button>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px', position: 'relative' }}>
-          {['moon', 'cache', 'tarot', 'grimoire'].map(tab => {
+          {['moon', 'cache', 'sigil', 'tarot', 'grimoire'].map(tab => {
             const isInitTarget = initiationActive && (
               (tab === 'moon' && !moonViewed) ||
               (tab === 'cache' && moonViewed && selectedItems.length === 0) ||
               (tab === 'tarot' && selectedItems.length > 0 && !tarot) ||
               (tab === 'grimoire' && tarot && selectedItems.length > 0)
             );
+            const isSigilTab = tab === 'sigil';
             return (
               <button
                 key={tab}
@@ -595,6 +600,10 @@ export default function Garden() {
             })}
           </div>
         </>
+      )}
+
+      {activeTab === 'sigil' && (
+        <IntentSigil onBind={data => setIntentSigilData(data)} />
       )}
 
       {activeTab === 'tarot' && (
