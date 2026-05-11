@@ -413,13 +413,15 @@ export default function Garden() {
     return matchesCategory && matchesSearch;
   });
 
+  const isLunarDay = new Date().getDay() === 1;
+
   return (
     <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
-          <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
-          <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px', margin: 0 }}>Atsanik Selene</h1>
-          <InukshukIcon size={28} glowing={selectedItems.length > 0} style={{ color: '#c084fc' }} />
+          <InukshukIcon size={28} glowing={selectedItems.length > 0 || isLunarDay} style={{ color: '#c084fc', animation: isLunarDay ? 'lunar-logo-pulse 2.5s ease-in-out infinite' : undefined }} />
+          <h1 style={{ color: 'white', fontSize: '2.4rem', fontStyle: 'italic', letterSpacing: '-1.5px', margin: 0, textShadow: isLunarDay ? '0 0 20px #c084fc80, 0 0 40px #7c3aed40' : 'none', animation: isLunarDay ? 'lunar-title-pulse 2.5s ease-in-out infinite' : 'none' }}>Atsanik Selene</h1>
+          <InukshukIcon size={28} glowing={selectedItems.length > 0 || isLunarDay} style={{ color: '#c084fc', animation: isLunarDay ? 'lunar-logo-pulse 2.5s ease-in-out infinite' : undefined }} />
         </div>
 
         {/* Guided Ritual Mode toggle */}
@@ -497,6 +499,14 @@ export default function Garden() {
             @keyframes initiation-pulse {
               0%, 100% { box-shadow: 0 0 0 0 #c084fc44; color: #c084fc; }
               50%       { box-shadow: 0 0 0 6px #c084fc15, 0 0 14px 3px #c084fc55; color: #e9d5ff; }
+            }
+            @keyframes lunar-logo-pulse {
+              0%, 100% { filter: drop-shadow(0 0 6px #c084fc) drop-shadow(0 0 12px #7c3aed88); }
+              50%       { filter: drop-shadow(0 0 18px #e9d5ff) drop-shadow(0 0 36px #c084fc) drop-shadow(0 0 60px #7c3aed88); }
+            }
+            @keyframes lunar-title-pulse {
+              0%, 100% { text-shadow: 0 0 20px #c084fc60, 0 0 40px #7c3aed30; }
+              50%       { text-shadow: 0 0 30px #e9d5ff, 0 0 60px #c084fc80, 0 0 100px #7c3aed50; }
             }
           `}</style>
         </div>
