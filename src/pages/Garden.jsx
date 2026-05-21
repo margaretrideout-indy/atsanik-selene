@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useAuth } from '../lib/AuthContext';
+import PublicHeader from '../components/garden/PublicHeader';
 import InukshukIcon from '../components/garden/InukshukIcon';
 import MoonDisplay from '../components/garden/MoonDisplay';
 import SigilEngine, { serializeSigil } from '../components/garden/SigilEngine';
@@ -215,6 +217,7 @@ const INITIATION_HIGHLIGHTS = new Set(['h26', 'c7']); // Crowberry (herb), Labra
 const INIT_HIGHLIGHT_IDS = new Set(['h1', 'c7']);
 
 export default function Garden() {
+  const { isAuthenticated, user, logout } = useAuth();
   const moonData = useMoonPhase();
   const [activeTab, setActiveTab] = useState('moon');
   const [subFilter, setSubFilter] = useState('Crystal');
@@ -421,6 +424,7 @@ export default function Garden() {
 
   return (
     <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
+      <PublicHeader isAuthenticated={isAuthenticated} user={user} onLogout={logout} />
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
           <InukshukIcon size={28} glowing={selectedItems.length > 0 || isLunarDay} style={{ color: '#c084fc', animation: isLunarDay ? 'lunar-logo-pulse 2.5s ease-in-out infinite' : undefined }} />
