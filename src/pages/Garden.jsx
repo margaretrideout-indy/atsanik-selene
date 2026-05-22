@@ -585,7 +585,7 @@ export default function Garden() {
                 <div key={item.id} onClick={() => {
                   playChime('soft');
                   if (isSelected) setSelectedItems(selectedItems.filter(i => i.id !== item.id));
-                  else if (selectedItems.length < 4) setSelectedItems([...selectedItems, item]);
+                  else setSelectedItems([...selectedItems, item]);
                 }} style={{ background: isSelected ? '#1e0a3c' : isInitHighlight ? '#120828' : '#040a08', border: isSelected ? `1px solid ${glowColor}55` : isInitHighlight ? '1px solid #c084fc66' : '1px solid #0a0a0a', padding: '45px 25px', borderRadius: '4px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', boxShadow: isSelected ? `0 0 18px 2px ${glowColor}22, 0 0 4px 1px ${glowColor}44` : isInitHighlight ? '0 0 20px 4px #c084fc22, 0 0 0 1px #c084fc33' : 'none', animation: isInitHighlight ? 'init-item-pulse 3s ease-in-out infinite' : 'none' }}
                   onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                   onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}

@@ -57,6 +57,75 @@ function cellCenter(cell) {
 
 const CANVAS_SIZE = 270;
 
+const SIGIL_SIZE = 300;
+const SIGIL_CELL = SIGIL_SIZE / 3;
+
+function sigilCellCenter(cell) {
+  const i = cell - 1;
+  const row = Math.floor(i / 3);
+  const col = i % 3;
+  return {
+    x: col * SIGIL_CELL + SIGIL_CELL / 2,
+    y: row * SIGIL_CELL + SIGIL_CELL / 2,
+  };
+}
+
+function LockedSigilDisplay({ cells }) {
+  if (!cells || cells.length < 2) return null;
+
+  const points = cells.map(sigilCellCenter);
+  const d = points.reduce((acc, pt, i) =>
+    i === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`, '');
+
+  const startPt = points[0];
+  const endPt = points[points.length - 1];
+
+  return (
+    <div style={{ display: 'inline-block', position: 'relative' }}>
+      <svg
+        width={SIGIL_SIZE}
+        height={SIGIL_SIZE}
+        viewBox={`0 0 ${SIGIL_SIZE} ${SIGIL_SIZE}`}
+        style={{ display: 'block', margin: '0 auto' }}
+      >
+        {/* Subtle outer circle */}
+        <circle
+          cx={SIGIL_SIZE / 2} cy={SIGIL_SIZE / 2} r={SIGIL_SIZE / 2 - 8}
+          fill="none" stroke="#22d3ee18" strokeWidth="1" strokeDasharray="4 8"
+        />
+
+        {/* Glow layer */}
+        <path d={d} fill="none" stroke="#22d3ee" strokeWidth="10" opacity="0.06" strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Main sigil line */}
+        <path d={d} fill="none" stroke="#22d3ee" strokeWidth="2" opacity="0.9" strokeLinecap="round" strokeLinejoin="round"
+          style={{ filter: 'drop-shadow(0 0 6px #22d3eeaa)' }}
+        />
+
+        {/* Start circle */}
+        <circle cx={startPt.x} cy={startPt.y} r="8" fill="none" stroke="#22d3ee" strokeWidth="1.5" opacity="0.7" />
+        <circle cx={startPt.x} cy={startPt.y} r="3" fill="#22d3ee" opacity="0.9" />
+
+        {/* End bar (traditional sigil terminator) */}
+        {(() => {
+          const p = points[points.length - 2];
+          const q = endPt;
+          const angle = Math.atan2(q.y - p.y, q.x - p.x) + Math.PI / 2;
+          const len = 10;
+          const x1 = q.x + Math.cos(angle) * len;
+          const y1 = q.y + Math.sin(angle) * len;
+          const x2 = q.x - Math.cos(angle) * len;
+          const y2 = q.y - Math.sin(angle) * len;
+          return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#22d3ee" strokeWidth="2" opacity="0.8" strokeLinecap="round" />;
+        })()}
+      </svg>
+      <p style={{ fontSize: '7px', color: '#22d3ee60', textTransform: 'uppercase', letterSpacing: '4px', marginTop: '8px' }}>
+        Bound Sigil
+      </p>
+    </div>
+  );
+}
+
 export default function IntentSigil({ onBind }) {
   const [intent, setIntent] = useState('');
   const [lockedPath, setLockedPath] = useState([]); // array of cell numbers
@@ -353,12 +422,15 @@ export default function IntentSigil({ onBind }) {
         </div>
       )}
 
-      {/* Reset button */}
+      {/* Locked sigil showcase */}
       {isLocked && (
-        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          {/* Render an enlarged, clean SVG of just the sigil path */}
+          <LockedSigilDisplay cells={lockedPath} />
           <button
             onClick={handleReset}
             style={{
+              marginTop: '16px',
               background: 'none', border: 'none', color: '#3b0764',
               fontSize: '9px', textTransform: 'uppercase', letterSpacing: '3px',
               cursor: 'pointer', transition: 'color 0.2s',
