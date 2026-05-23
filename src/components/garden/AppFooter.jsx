@@ -5,6 +5,7 @@ const LINKS = [
   { label: 'Indigenized Curriculum Engine', href: 'https://indigenizedcurriculumengine.base44.app' },
   { label: 'LinkTree', href: 'https://linktree.com/mzrdt333' },
   { label: 'Support on Ko-fi', href: 'https://ko-fi.com/mzrdt333' },
+  { label: 'My Amazon Shop', href: 'https://www.amazon.com/shop/hearthandh0a6-20' },
 ];
 
 export default function AppFooter() {
@@ -53,6 +54,15 @@ export default function AppFooter() {
           </a>
         ))}
       </div>
+      <p style={{
+        fontSize: '10px',
+        color: '#2d1a4a',
+        fontFamily: 'sans-serif',
+        margin: '14px 0 0',
+        letterSpacing: '0.5px',
+      }}>
+        *As an Amazon Associate I earn from qualifying purchases.
+      </p>
     </footer>
   );
 }
