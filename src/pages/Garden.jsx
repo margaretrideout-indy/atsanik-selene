@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { base44 } from '@/api/base44Client';
 import { useAuth } from '../lib/AuthContext';
 import PublicHeader from '../components/garden/PublicHeader';
 import InukshukIcon from '../components/garden/InukshukIcon';
@@ -333,7 +334,13 @@ export default function Garden() {
     sealRitual();
   };
 
+  const trackActivity = (action, metadata) => {
+    if (!user?.email) return;
+    base44.entities.UserActivity.create({ user_email: user.email, action, metadata: metadata || '' }).catch(() => {});
+  };
+
   const sealRitual = () => {
+    trackActivity('Saved to Grimoire', `Moon: ${moonData?.phase || 'Unknown'} · Items: ${selectedItems.map(i => i.name).join(', ')}`);
     const newEntry = {
       id: Date.now(),
       timestamp: new Date().toISOString(),
@@ -373,6 +380,7 @@ export default function Garden() {
 
   const drawTarot = () => {
     playChime('soft');
+    trackActivity('Drew a Tarot Reading', `Spread size: ${spreadSize}`);
     const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
     const positions = POSITION_LABELS[spreadSize] || POSITION_LABELS[3];
     const drawn = shuffled.slice(0, positions.length).map((card, i) => ({

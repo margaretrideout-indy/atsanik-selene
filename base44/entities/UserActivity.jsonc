@@ -1,0 +1,22 @@
+{
+  "name": "UserActivity",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who performed the action"
+    },
+    "action": {
+      "type": "string",
+      "description": "Action performed, e.g. 'Saved to Grimoire', 'Drew a Tarot Reading'"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Optional extra context (moon phase, spread size, etc.)"
+    }
+  },
+  "required": [
+    "user_email",
+    "action"
+  ]
+}
