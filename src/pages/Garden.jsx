@@ -11,6 +11,7 @@ import GuidedRitualMode, { AuroraPulse, FloorThread } from '../components/garden
 import TarotSpread, { POSITION_LABELS } from '../components/garden/TarotSpread';
 import GrimoireTab from '../components/garden/GrimoireTab';
 import IntentSigil from '../components/garden/IntentSigil';
+import AppFooter from '../components/garden/AppFooter';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -701,6 +702,8 @@ export default function Garden() {
       {isCleansing && (
         <div className="fade-to-black" style={{ position: 'fixed', inset: 0, backgroundColor: '#000', zIndex: 2000 }} />
       )}
+
+      <AppFooter />
 
       {/* Info modal */}
       {showInfo && (
