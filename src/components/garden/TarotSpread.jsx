@@ -300,6 +300,20 @@ export default function TarotSpread({ tarot, spreadSize, onSpreadSizeChange, onD
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px' }}>
       <SpreadLayout cards={tarot} size={spreadSize} />
       <div style={{ textAlign: 'center' }}>
+        <a
+          href="/deck-gallery"
+          style={{
+            display: 'inline-block', marginBottom: '20px',
+            fontSize: '9px', color: '#4c2a7a', textDecoration: 'none',
+            textTransform: 'uppercase', letterSpacing: '4px', fontFamily: 'serif',
+            transition: 'color 0.2s, text-shadow 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#c084fc'; e.currentTarget.style.textShadow = '0 0 8px #c084fc60'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#4c2a7a'; e.currentTarget.style.textShadow = 'none'; }}
+        >
+          Explore the full Deck Gallery ›
+        </a>
+        <br />
         <button
           onClick={onReset}
           style={{ background: 'none', border: 'none', color: '#4c3060', fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer', letterSpacing: '3px' }}
