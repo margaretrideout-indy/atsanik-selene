@@ -189,25 +189,108 @@ function SpreadLayout({ cards, size }) {
 }
 
 export default function TarotSpread({ tarot, spreadSize, onSpreadSizeChange, onDraw, onReset, isShaking }) {
+  const [summoned, setSummoned] = useState(false);
+
+  const handleShuffle = () => {
+    setSummoned(true);
+    onDraw();
+  };
+
   if (!tarot) {
-    return (
-      <div style={{ padding: '60px 20px' }}>
-        <SpreadSelector selected={spreadSize} onChange={onSpreadSizeChange} />
-        <div
-          onClick={onDraw}
-          style={{
-            width: '220px', height: '320px', border: '1px solid #701a75',
-            borderRadius: '4px', margin: '0 auto', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'repeating-linear-gradient(45deg, #08082a, #08082a 8px, #0d0d35 8px, #0d0d35 16px)',
-            transform: isShaking ? 'translateX(2px)' : 'none',
-            transition: 'transform 0.05s',
-            boxShadow: '0 0 20px 2px #a855f720',
-          }}
-        >
-          <div style={{ color: '#a78bfa', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px', transform: 'rotate(-90deg)' }}>
-            Consign to Fate
+    // Pre-interaction Summoning layer
+    if (!summoned) {
+      return (
+        <div style={{ padding: '60px 20px', maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: '9px', color: '#4c1d95', textTransform: 'uppercase', letterSpacing: '6px', margin: '0 0 18px' }}>
+            The Summoning
+          </p>
+          <h2 style={{ color: '#f0ebff', fontStyle: 'italic', fontSize: '1.6rem', fontWeight: 400, margin: '0 0 28px', lineHeight: '1.4' }}>
+            Before you proceed, reach a state of stillness.
+          </h2>
+          <p style={{ color: '#8b7aa8', fontSize: '14px', lineHeight: '1.9', margin: '0 0 40px', fontStyle: 'italic' }}>
+            The Atsanik Selene requires a quiet mind. If you are frantic, the cards will mirror that turbulence.
+          </p>
+
+          <div style={{ borderTop: '1px solid #1a0830', borderBottom: '1px solid #1a0830', padding: '36px 0', margin: '0 0 40px' }}>
+            <p style={{ fontSize: '9px', color: '#4c1d95', textTransform: 'uppercase', letterSpacing: '5px', margin: '0 0 22px' }}>
+              First, select your focus
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+              {[1, 3].map(n => (
+                <button
+                  key={n}
+                  onClick={() => onSpreadSizeChange(n)}
+                  style={{
+                    background: spreadSize === n ? 'linear-gradient(135deg, #1e0845, #3b0764)' : 'transparent',
+                    border: spreadSize === n ? '1px solid #7c3aed' : '1px solid #2d1255',
+                    borderRadius: '4px',
+                    padding: '16px 32px',
+                    cursor: 'pointer',
+                    color: spreadSize === n ? '#e9d5ff' : '#4c2a7a',
+                    fontSize: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '4px',
+                    fontWeight: 700,
+                    transition: 'all 0.25s',
+                    boxShadow: spreadSize === n ? '0 0 20px 3px #7c3aed33' : 'none',
+                    minWidth: '120px',
+                    fontFamily: 'serif',
+                  }}
+                  onMouseEnter={e => { if (spreadSize !== n) { e.currentTarget.style.borderColor = '#4c1d95'; e.currentTarget.style.color = '#7c3aed'; } }}
+                  onMouseLeave={e => { if (spreadSize !== n) { e.currentTarget.style.borderColor = '#2d1255'; e.currentTarget.style.color = '#4c2a7a'; } }}
+                >
+                  {n} {n === 1 ? 'Card' : 'Cards'}
+                </button>
+              ))}
+            </div>
           </div>
+
+          <p style={{ color: '#6b5a82', fontSize: '13px', lineHeight: '1.9', margin: '0 0 40px', fontStyle: 'italic' }}>
+            Once you have chosen, take a breath. Acknowledge the cold air. When your intent is set, click the deck below to initiate the shuffle. Watch the movement until you feel the click of resonance.
+          </p>
+
+          <button
+            onClick={handleShuffle}
+            disabled={!spreadSize}
+            style={{
+              background: spreadSize ? 'linear-gradient(135deg, #2e1065, #6d28d9, #22d3ee)' : '#0d0520',
+              backgroundSize: '250% 250%',
+              animation: spreadSize ? 'summon-shimmer 5s ease infinite' : 'none',
+              border: spreadSize ? '1px solid rgba(192,132,252,0.4)' : '1px solid #1a0830',
+              borderRadius: '3px',
+              padding: '20px 48px',
+              cursor: spreadSize ? 'pointer' : 'not-allowed',
+              color: spreadSize ? '#e9d5ff' : '#2d1a4a',
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              letterSpacing: '6px',
+              fontWeight: 700,
+              fontFamily: 'serif',
+              transition: 'opacity 0.3s',
+              opacity: spreadSize ? 1 : 0.4,
+              transform: isShaking ? 'translateX(3px)' : 'none',
+              boxShadow: spreadSize ? '0 0 30px 6px rgba(109,40,217,0.3)' : 'none',
+            }}
+          >
+            Shuffle the Deck
+          </button>
+
+          <style>{`
+            @keyframes summon-shimmer {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+          `}</style>
+        </div>
+      );
+    }
+
+    // After shuffle initiated but cards not yet drawn (brief transition state)
+    return (
+      <div style={{ padding: '60px 20px', textAlign: 'center' }}>
+        <div style={{ color: '#a78bfa', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '8px' }}>
+          The cards are turning...
         </div>
       </div>
     );

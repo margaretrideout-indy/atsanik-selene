@@ -258,14 +258,14 @@ export default function Garden() {
   useEffect(() => {
     if (!guidedMode) return;
     if (guidedStep === 'cache' && selectedItems.length >= 2) {
-      setGuidedStep('tarot');
-      setActiveTab('tarot');
+      setGuidedStep('oracle');
+      setActiveTab('oracle');
     }
   }, [guidedMode, guidedStep, selectedItems.length]);
 
   useEffect(() => {
     if (!guidedMode) return;
-    if (guidedStep === 'tarot' && tarot) {
+    if (guidedStep === 'oracle' && tarot) {
       setGuidedStep('grimoire');
     }
   }, [guidedMode, guidedStep, tarot]);
@@ -472,11 +472,11 @@ export default function Garden() {
           </button>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '35px', marginTop: '15px', position: 'relative' }}>
-          {['moon', 'cache', 'sigil', 'tarot', 'grimoire'].map(tab => {
+          {['moon', 'cache', 'sigil', 'oracle', 'grimoire'].map(tab => {
             const isInitTarget = initiationActive && (
               (tab === 'moon' && !moonViewed) ||
               (tab === 'cache' && moonViewed && selectedItems.length === 0) ||
-              (tab === 'tarot' && selectedItems.length > 0 && !tarot) ||
+              (tab === 'oracle' && selectedItems.length > 0 && !tarot) ||
               (tab === 'grimoire' && tarot && selectedItems.length > 0)
             );
             const isSigilTab = tab === 'sigil';
@@ -618,7 +618,7 @@ export default function Garden() {
         <IntentSigil onBind={data => setIntentSigilData(data)} />
       )}
 
-      {activeTab === 'tarot' && (
+      {activeTab === 'oracle' && (
         <TarotSpread
           tarot={tarot}
           spreadSize={spreadSize}
