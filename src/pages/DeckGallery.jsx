@@ -70,60 +70,61 @@ function CardModal({ card, onClose }) {
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 5000,
-        backgroundColor: 'rgba(10, 2, 20, 0.75)',
+        backgroundColor: 'rgba(4, 0, 12, 0.88)',
+        backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '24px', overflowY: 'auto',
-        animation: 'modal-in 0.3s ease',
+        animation: 'modal-in 0.35s ease',
       }}
     >
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          maxWidth: '520px', width: '100%',
-          background: '#f5f0eb',
-          border: '1px solid #d4c5a9',
-          borderRadius: '12px',
-          padding: '48px 36px',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+          maxWidth: '560px', width: '100%',
+          background: 'linear-gradient(160deg, #0c0120 0%, #0a0130 50%, #080118 100%)',
+          border: '1px solid rgba(200, 180, 255, 0.35)',
+          borderRadius: '14px',
+          padding: '56px 48px',
+          boxShadow: '0 0 0 1px rgba(180,160,255,0.1), 0 0 50px 8px rgba(124,58,237,0.25), inset 0 0 60px 0 rgba(80,40,160,0.12)',
           textAlign: 'center',
         }}
       >
         {/* Image box */}
-        <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginBottom: '36px', display: 'flex', justifyContent: 'center' }}>
           <div style={{
-            background: '#fff',
-            borderRadius: '8px',
-            padding: '18px',
+            background: 'rgba(245, 240, 255, 0.93)',
+            borderRadius: '10px',
+            padding: '20px',
             display: 'inline-flex',
             alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 16px rgba(100,60,180,0.15)',
+            boxShadow: '0 0 30px 6px rgba(192,132,252,0.3)',
           }}>
             {img ? (
               <img src={img} alt={card.name} style={{
-                width: '160px', height: '160px', objectFit: 'contain',
+                width: '170px', height: '170px', objectFit: 'contain',
               }} />
             ) : (
-              <div style={{ fontSize: '80px', lineHeight: 1 }}>{card.icon}</div>
+              <div style={{ fontSize: '90px', lineHeight: 1 }}>{card.icon}</div>
             )}
           </div>
         </div>
 
         {/* Title & theme */}
-        <h2 style={{ color: '#1e0a3c', fontStyle: 'italic', fontSize: '1.9rem', fontWeight: 600, margin: '0 0 8px', lineHeight: '1.3' }}>
+        <h2 style={{ color: '#f0ebff', fontStyle: 'italic', fontSize: '2.2rem', fontWeight: 500, margin: '0 0 10px', lineHeight: '1.3', textShadow: '0 0 20px rgba(192,132,252,0.5)' }}>
           {card.name}
         </h2>
-        <p style={{ fontSize: '9px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 36px', fontWeight: 600 }}>
+        <p style={{ fontSize: '10px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: '0 0 44px', fontWeight: 600 }}>
           {card.theme}
         </p>
 
         {/* Past / Present / Future */}
         {['past', 'present', 'future'].map(t => (
-          <div key={t} style={{ textAlign: 'left', marginBottom: '26px', borderLeft: '2px solid #7c3aed55', paddingLeft: '20px' }}>
-            <p style={{ fontSize: '7px', color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 8px', fontWeight: 700 }}>{t}</p>
-            <p style={{ fontSize: '14px', color: '#1e0a3c', fontStyle: 'italic', lineHeight: '1.85', margin: '0 0 6px', fontWeight: 500 }}>
+          <div key={t} style={{ textAlign: 'left', marginBottom: '32px', borderLeft: '2px solid rgba(167,139,250,0.4)', paddingLeft: '24px' }}>
+            <p style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '5px', margin: '0 0 10px', fontWeight: 700 }}>{t}</p>
+            <p style={{ fontSize: '16px', color: '#ede9fe', fontStyle: 'italic', lineHeight: '1.9', margin: '0 0 8px', fontWeight: 400 }}>
               {card[t].meaning}
             </p>
-            <p style={{ fontSize: '11px', color: '#6d28d9', fontStyle: 'italic', margin: 0, lineHeight: '1.6' }}>
+            <p style={{ fontSize: '13px', color: '#7c3aed', fontStyle: 'italic', margin: 0, lineHeight: '1.7' }}>
               ✦ {card[t].fateLine}
             </p>
           </div>
@@ -132,12 +133,13 @@ function CardModal({ card, onClose }) {
         <button
           onClick={onClose}
           style={{
-            marginTop: '12px', background: 'none', border: 'none',
-            color: '#9ca3af', fontSize: '9px', textTransform: 'uppercase',
-            letterSpacing: '4px', cursor: 'pointer', transition: 'color 0.2s',
+            marginTop: '16px', background: 'none', border: 'none',
+            color: '#4c3060', fontSize: '9px', textTransform: 'uppercase',
+            letterSpacing: '5px', cursor: 'pointer', transition: 'color 0.2s',
+            fontFamily: 'serif',
           }}
-          onMouseEnter={e => e.currentTarget.style.color = '#4c1d95'}
-          onMouseLeave={e => e.currentTarget.style.color = '#9ca3af'}
+          onMouseEnter={e => e.currentTarget.style.color = '#c084fc'}
+          onMouseLeave={e => e.currentTarget.style.color = '#4c3060'}
         >
           Return to the Gallery
         </button>
