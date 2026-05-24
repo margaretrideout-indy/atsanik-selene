@@ -199,14 +199,16 @@ export default function DeckGallery() {
               key={card.name}
               onClick={() => setSelected(card)}
               style={{
-                background: '#08021a',
-                border: '1px solid #1e0a3c',
-                borderRadius: '10px',
-                padding: '32px 20px 24px',
+                background: 'rgba(232, 220, 255, 0.07)',
+                border: '1px solid #3b1a6a',
+                borderRadius: '12px',
+                padding: '36px 24px 28px',
                 textAlign: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
+                backdropFilter: 'blur(6px)',
+                boxShadow: 'inset 0 0 30px 0 rgba(100, 60, 180, 0.08), 0 2px 16px 0 rgba(0,0,0,0.4)',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.borderColor = '#7c3aed';
@@ -220,30 +222,30 @@ export default function DeckGallery() {
               }}
             >
               {/* Card image */}
-              <div style={{ width: '100px', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '120px', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {img ? (
                   <img src={img} alt={card.name} style={{
                     width: '100%', height: '100%', objectFit: 'contain',
                     mixBlendMode: 'screen',
-                    filter: 'drop-shadow(0 0 8px #c084fc66)',
+                    filter: 'drop-shadow(0 0 10px #c084fc88)',
                   }} />
                 ) : (
-                  <span style={{ fontSize: '56px' }}>{card.icon}</span>
+                  <span style={{ fontSize: '68px' }}>{card.icon}</span>
                 )}
               </div>
 
               {/* Title */}
-              <h3 style={{ color: '#e2d9f3', fontSize: '1rem', fontStyle: 'italic', margin: 0, textShadow: '0 0 10px #c084fc40' }}>
+              <h3 style={{ color: '#f0eaff', fontSize: '1.15rem', fontStyle: 'italic', fontWeight: 600, margin: 0, lineHeight: '1.4', textShadow: '0 0 12px #c084fc50' }}>
                 {card.name}
               </h3>
 
               {/* Theme */}
-              <p style={{ fontSize: '8px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '2px', margin: 0, lineHeight: '1.5' }}>
+              <p style={{ fontSize: '9px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '2px', margin: 0, lineHeight: '1.7', fontWeight: 500 }}>
                 {card.theme}
               </p>
 
               {/* Hint */}
-              <span style={{ fontSize: '8px', color: '#2d1a4a', textTransform: 'uppercase', letterSpacing: '3px', marginTop: '4px' }}>
+              <span style={{ fontSize: '8px', color: '#4c2a7a', textTransform: 'uppercase', letterSpacing: '3px', marginTop: '2px' }}>
                 View Lore →
               </span>
             </div>
