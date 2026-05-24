@@ -136,7 +136,7 @@ const PROPERTY_GLOW = {
 
 // --- CUSTOM SCRIMSHAW ICON URLS ---
 const CUSTOM_ICONS = {
-  'The Traveler':    'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/ebe1ebbd3_generated_image.png',
+  'The Traveler':    'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/e126608ed_generated_image.png',
   'The Drum':        'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/f56c6b812_generated_image.png',
   'The Angakkuq':    'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/b00a8a777_generated_image.png',
   'Sedna':           'https://media.base44.com/images/public/69ef3e790d68b46e39044a00/7b5071d27_generated_image.png',
