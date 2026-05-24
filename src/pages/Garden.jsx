@@ -208,9 +208,8 @@ function itemsFromSigil(sigilStr) {
 // Cache tab category mapping
 const CACHE_TABS = [
   { label: 'All', value: 'all' },
-  { label: 'The Land', value: 'land', types: ['Herb'] },
-  { label: 'The Earth', value: 'earth', types: ['Crystal'] },
-  { label: 'The Spirit', value: 'spirit', types: ['Pantry', 'Colour'] },
+  { label: "Earth & Flora", value: 'flora', types: ['Herb'] },
+  { label: "Stone & Hearth", value: 'hearth', types: ['Crystal', 'Pantry', 'Colour'] },
 ];
 
 // Items highlighted during initiation Stage 2
@@ -549,7 +548,7 @@ export default function Garden() {
           {/* Cache Header */}
           <div style={{ textAlign: 'center', marginBottom: '30px', position: 'relative' }}>
             <h2 style={{ background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontSize: '2rem', fontStyle: 'italic', marginBottom: '6px' }}>The Cache</h2>
-            <p style={{ color: '#6d28d9', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', fontStyle: 'italic' }}>Stones gathered for the building of the path.</p>
+            <p style={{ color: '#6d28d9', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', fontStyle: 'italic' }}>The Forager's Index · Gather, craft, and store your magical work.</p>
             <button onClick={() => setShowInfo(true)} title="About Atsanik Selene" style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: '1px solid #4c1d95', borderRadius: '50%', width: '28px', height: '28px', color: '#7c3aed', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#a855f7'; e.currentTarget.style.color = '#e9d5ff'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = '#4c1d95'; e.currentTarget.style.color = '#7c3aed'; }}
