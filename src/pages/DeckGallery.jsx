@@ -81,44 +81,52 @@ function CardModal({ card, onClose }) {
         onClick={e => e.stopPropagation()}
         style={{
           maxWidth: '520px', width: '100%',
-          background: 'linear-gradient(160deg, #0d0020 0%, #09001a 100%)',
-          border: '1px solid #4c1d9555',
+          background: 'rgba(20, 4, 40, 0.92)',
+          border: '1px solid #3b1a6a',
           borderRadius: '12px',
           padding: '48px 36px',
-          boxShadow: '0 0 60px 8px #7c3aed22',
+          boxShadow: 'inset 0 0 40px 0 rgba(100, 60, 180, 0.10), 0 0 60px 8px #7c3aed22',
+          backdropFilter: 'blur(10px)',
           textAlign: 'center',
         }}
       >
-        {/* Image */}
-        <div style={{ marginBottom: '28px' }}>
-          {img ? (
-            <img src={img} alt={card.name} style={{
-              width: '160px', height: '160px', objectFit: 'contain',
-              mixBlendMode: 'screen',
-              filter: 'drop-shadow(0 0 20px #c084fcaa)',
-              animation: 'card-glow 4s ease-in-out infinite',
-            }} />
-          ) : (
-            <div style={{ fontSize: '80px', lineHeight: 1 }}>{card.icon}</div>
-          )}
+        {/* Image — white parchment box */}
+        <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            background: 'rgba(245, 240, 255, 0.92)',
+            borderRadius: '8px',
+            padding: '18px',
+            display: 'inline-flex',
+            alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 0 30px 4px #c084fc33',
+          }}>
+            {img ? (
+              <img src={img} alt={card.name} style={{
+                width: '160px', height: '160px', objectFit: 'contain',
+                animation: 'card-glow 4s ease-in-out infinite',
+              }} />
+            ) : (
+              <div style={{ fontSize: '80px', lineHeight: 1 }}>{card.icon}</div>
+            )}
+          </div>
         </div>
 
         {/* Title & theme */}
-        <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '1.8rem', fontWeight: 300, margin: '0 0 6px' }}>
+        <h2 style={{ color: 'white', fontStyle: 'italic', fontSize: '1.9rem', fontWeight: 500, margin: '0 0 8px', lineHeight: '1.3' }}>
           {card.name}
         </h2>
-        <p style={{ fontSize: '8px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 36px' }}>
+        <p style={{ fontSize: '9px', color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 36px', fontWeight: 500 }}>
           {card.theme}
         </p>
 
         {/* Past / Present / Future */}
         {['past', 'present', 'future'].map(t => (
-          <div key={t} style={{ textAlign: 'left', marginBottom: '24px', borderLeft: '1px solid #4c1d9555', paddingLeft: '18px' }}>
-            <p style={{ fontSize: '7px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 6px' }}>{t}</p>
-            <p style={{ fontSize: '13px', color: '#e9d5ff', fontStyle: 'italic', lineHeight: '1.8', margin: '0 0 4px' }}>
+          <div key={t} style={{ textAlign: 'left', marginBottom: '26px', borderLeft: '2px solid #4c1d9566', paddingLeft: '20px' }}>
+            <p style={{ fontSize: '7px', color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 8px', fontWeight: 600 }}>{t}</p>
+            <p style={{ fontSize: '14px', color: '#ede9fe', fontStyle: 'italic', lineHeight: '1.85', margin: '0 0 6px', fontWeight: 500 }}>
               {card[t].meaning}
             </p>
-            <p style={{ fontSize: '10px', color: '#7c3aed', fontStyle: 'italic', margin: 0 }}>
+            <p style={{ fontSize: '11px', color: '#7c3aed', fontStyle: 'italic', margin: 0, lineHeight: '1.6' }}>
               ✦ {card[t].fateLine}
             </p>
           </div>
