@@ -1,6 +1,7 @@
 import React from 'react';
 
 const LINKS = [
+  { label: 'The Deck Gallery', href: '/deck-gallery', internal: true },
   { label: 'Hearth & Horizon', href: 'https://hearth-horizon-2026.base44.app' },
   { label: 'Indigenized Curriculum Engine', href: 'https://indigenizedcurriculumengine.base44.app' },
   { label: 'LinkTree', href: 'https://linktree.com/mzrdt333' },
@@ -31,8 +32,8 @@ export default function AppFooter() {
           <a
             key={link.label}
             href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={link.internal ? '_self' : '_blank'}
+            rel={link.internal ? undefined : 'noopener noreferrer'}
             style={{
               fontSize: '11px',
               color: '#4c2a7a',

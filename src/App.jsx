@@ -5,6 +5,7 @@ import { queryClientInstance } from '@/lib/query-client';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import Garden from './pages/Garden';
 import AdminDashboard from './pages/AdminDashboard';
+import DeckGallery from './pages/DeckGallery';
 
 // Wrap any private page with this — redirects to "/" if not authenticated
 function ProtectedRoute({ children }) {
@@ -25,6 +26,9 @@ export default function App() {
 
             {/* Hidden admin dashboard */}
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+            {/* Deck Gallery */}
+            <Route path="/deck-gallery" element={<DeckGallery />} />
 
             {/* Catch-all: redirect unknown paths to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />
