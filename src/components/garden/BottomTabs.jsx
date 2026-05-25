@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TABS = [
   { id: 'moon',     label: 'Moon',    icon: '🌙' },
@@ -9,12 +10,12 @@ const TABS = [
 ];
 
 export default function BottomTabs({ activeTab, onTabChange, lockedTabs = [] }) {
+  const navigate = useNavigate();
+
   const handleTab = (id) => {
     if (lockedTabs.includes(id)) return;
-    // Update URL search params so the native back button works
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', id);
-    window.history.pushState({}, '', url);
+    // Use react-router navigate so history stack is managed correctly
+    navigate(`?tab=${id}`);
     onTabChange(id);
   };
 

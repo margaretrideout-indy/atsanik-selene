@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import InukshukIcon from './InukshukIcon';
 import SigilEngine from './SigilEngine';
+import usePullToRefresh from '../../hooks/usePullToRefresh';
+import PullIndicator from './PullIndicator';
 
 const MASTER_DATA_IDS = {}; // will reconstruct from sigil
 
@@ -203,6 +205,13 @@ export default function GrimoireTab({ archives, masterData }) {
   const [search, setSearch] = useState('');
   const [reviewing, setReviewing] = useState(null);
 
+  // Pull-to-refresh: grimoire is read-only so we just force a re-render signal
+  const handleRefresh = useCallback(async () => {
+    // Grimoire reads from local state passed via props; a brief delay gives user feedback
+    await new Promise(r => setTimeout(r, 600));
+  }, []);
+  const { ref: pullRef, pullDistance, isRefreshing } = usePullToRefresh(handleRefresh);
+
   const filtered = archives.filter(log =>
     search === '' ||
     log.mantra?.toLowerCase().includes(search.toLowerCase()) ||
@@ -211,7 +220,8 @@ export default function GrimoireTab({ archives, masterData }) {
   );
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', padding: '20px' }}>
+    <div ref={pullRef} style={{ maxWidth: '680px', margin: '0 auto', padding: '20px', position: 'relative', overflowY: 'auto' }}>
+      <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
       <h2 style={{
         background: 'linear-gradient(135deg, #d8b4fe, #94a3b8)',
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',

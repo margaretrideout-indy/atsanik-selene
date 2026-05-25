@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import BirthrightModal from './BirthrightModal';
 import CelestialRhythm from './CelestialRhythm';
 import DailyEcho from './DailyEcho';
+import usePullToRefresh from '../../hooks/usePullToRefresh';
+import PullIndicator from './PullIndicator';
 
 export default function MoonDisplay({ archives }) {
   const [moonData, setMoonData] = useState(null);
@@ -22,19 +24,21 @@ export default function MoonDisplay({ archives }) {
 
   const isLunarDay = new Date().getDay() === 1; // Monday
 
-  const fetchMoon = async () => {
+  const fetchMoon = useCallback(async () => {
     setPulse(true);
     const res = await base44.functions.invoke('getMoonPhase', {});
     setMoonData(res.data);
     setLoading(false);
     setTimeout(() => setPulse(false), 1200);
-  };
+  }, []);
 
   useEffect(() => {
     fetchMoon();
     const interval = setInterval(fetchMoon, 10 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchMoon]);
+
+  const { ref: pullRef, pullDistance, isRefreshing } = usePullToRefresh(fetchMoon);
 
   const phase = moonData?.phase || '—';
   const illumination = moonData?.illumination ?? '—';
@@ -56,7 +60,12 @@ export default function MoonDisplay({ archives }) {
         <BirthrightModal onSave={handleSave} onSkip={handleSkip} />
       )}
 
-      <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '40px' }}>
+      <div
+        ref={pullRef}
+        style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '40px', position: 'relative', overflowY: 'auto' }}
+      >
+        <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
+
         <div style={{ textAlign: 'center', padding: '60px 0 40px' }}>
           {/* Moon emoji with Lunar High animation on Mondays */}
           <div style={{ position: 'relative', display: 'inline-block', marginBottom: '25px' }}>

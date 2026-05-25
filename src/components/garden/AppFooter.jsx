@@ -29,7 +29,7 @@ export default function AppFooter() {
       }}>
         Created by Margaret Rideout &nbsp;·&nbsp; Explore My Projects
       </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px 20px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px 12px' }}>
         {LINKS.map(link => (
           <a
             key={link.label}
@@ -37,12 +37,16 @@ export default function AppFooter() {
             target={link.internal ? '_self' : '_blank'}
             rel={link.internal ? undefined : 'noopener noreferrer'}
             style={{
-              fontSize: '11px',
+              fontSize: '14px',
               color: '#4c2a7a',
               textDecoration: 'none',
               fontFamily: 'sans-serif',
               letterSpacing: '1px',
               transition: 'color 0.3s, text-shadow 0.3s',
+              display: 'inline-flex',
+              alignItems: 'center',
+              minHeight: '44px',
+              padding: '0 6px',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.color = '#22d3ee';
