@@ -12,6 +12,7 @@ import TarotSpread, { POSITION_LABELS } from '../components/garden/TarotSpread';
 import GrimoireTab from '../components/garden/GrimoireTab';
 import IntentSigil from '../components/garden/IntentSigil';
 import AppFooter from '../components/garden/AppFooter';
+import BottomTabs from '../components/garden/BottomTabs';
 
 // Inuttitut seasonal calendar (approximate)
 function getInuttitutSeason() {
@@ -220,7 +221,21 @@ const INIT_HIGHLIGHT_IDS = new Set(['h1', 'c7']);
 export default function Garden() {
   const { isAuthenticated, user, logout } = useAuth();
   const moonData = useMoonPhase();
-  const [activeTab, setActiveTab] = useState('moon');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'moon';
+  });
+
+  // Sync tab when browser back/forward is used
+  React.useEffect(() => {
+    const handler = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab') || 'moon';
+      setActiveTab(tab);
+    };
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
   const [subFilter, setSubFilter] = useState('Crystal');
   const [cacheTab, setCacheTab] = useState('all');
   const [selectedItems, setSelectedItems] = useState([]);
@@ -259,7 +274,7 @@ export default function Garden() {
     if (!guidedMode) return;
     if (guidedStep === 'cache' && selectedItems.length >= 2) {
       setGuidedStep('oracle');
-      setActiveTab('oracle');
+      navigateToTab('oracle');
     }
   }, [guidedMode, guidedStep, selectedItems.length]);
 
@@ -273,6 +288,13 @@ export default function Garden() {
   const isTabLocked = (tab) => {
     if (!guidedMode) return false;
     return tab !== guidedStep;
+  };
+
+  const navigateToTab = (tab) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tab);
+    window.history.pushState({}, '', url);
+    setActiveTab(tab);
   };
 
   useEffect(() => {
@@ -431,7 +453,7 @@ export default function Garden() {
   const isLunarDay = new Date().getDay() === 1;
 
   return (
-    <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif' }}>
+    <div style={{ backgroundColor: '#12011a', minHeight: '100vh', color: '#cbd5e1', padding: '20px', fontFamily: 'serif', paddingBottom: 'calc(env(safe-area-inset-bottom) + 72px)' }}>
       <PublicHeader isAuthenticated={isAuthenticated} user={user} onLogout={logout} />
       <header style={{ textAlign: 'center', marginBottom: '40px', paddingTop: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
@@ -449,7 +471,7 @@ export default function Garden() {
             onClick={() => {
               const next = !guidedMode;
               setGuidedMode(next);
-              if (next) { setGuidedStep('moon'); setActiveTab('moon'); }
+                if (next) { setGuidedStep('moon'); navigateToTab('moon'); }
             }}
             style={{
               width: '36px', height: '18px', borderRadius: '9px',
@@ -486,7 +508,7 @@ export default function Garden() {
                 ref={el => { navBtnRefs.current[tab] = el; }}
                 onClick={() => {
                   if (isTabLocked(tab)) return;
-                  setActiveTab(tab);
+                  navigateToTab(tab);
                   if (tab === 'moon' && !moonViewed) setTimeout(() => setMoonViewed(true), 3000);
                 }}
                 className={activeTab === tab ? 'shimmer-btn' : ''}
@@ -533,7 +555,7 @@ export default function Garden() {
       {guidedMode && (
         <GuidedRitualMode
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={navigateToTab}
           currentStep={guidedStep}
           navRefs={navBtnRefs}
         />
@@ -680,7 +702,7 @@ export default function Garden() {
       {initiationActive && (
         <InitiationFlow
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={navigateToTab}
           moonViewed={moonViewed}
           itemsSelected={selectedItems.length > 0}
           tarotDrawn={!!tarot}
@@ -703,6 +725,12 @@ export default function Garden() {
       )}
 
       <AppFooter />
+
+      <BottomTabs
+        activeTab={activeTab}
+        onTabChange={navigateToTab}
+        lockedTabs={guidedMode ? ['moon','cache','sigil','oracle','grimoire'].filter(t => t !== guidedStep) : []}
+      />
 
       {/* Info modal */}
       {showInfo && (
