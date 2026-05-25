@@ -1,6 +1,8 @@
 import React from 'react';
 
 const LINKS = [
+  { label: 'About', href: '/about', internal: true },
+  { label: 'Contact', href: '/contact', internal: true },
   { label: 'The Deck Gallery', href: '/deck-gallery', internal: true },
   { label: 'Hearth & Horizon', href: 'https://hearth-horizon-2026.base44.app' },
   { label: 'Indigenized Curriculum Engine', href: 'https://indigenizedcurriculumengine.base44.app' },

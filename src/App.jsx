@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import Garden from './pages/Garden';
 import AdminDashboard from './pages/AdminDashboard';
 import DeckGallery from './pages/DeckGallery';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 // Wrap any private page with this — redirects to "/" if not authenticated
 function ProtectedRoute({ children }) {
@@ -29,6 +31,10 @@ export default function App() {
 
             {/* Deck Gallery */}
             <Route path="/deck-gallery" element={<DeckGallery />} />
+
+            {/* About & Contact */}
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
 
             {/* Catch-all: redirect unknown paths to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />
