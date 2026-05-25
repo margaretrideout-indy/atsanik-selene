@@ -169,7 +169,7 @@ export default function DeckGallery() {
           onMouseEnter={e => e.currentTarget.style.color = '#a855f7'}
           onMouseLeave={e => e.currentTarget.style.color = '#4c1d95'}
         >
-          ← Return to the Garden
+          ← Return to Atsanik Selene
         </a>
       </div>
 
